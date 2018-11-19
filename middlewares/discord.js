@@ -9,7 +9,7 @@ const router = express.Router();
 
 const CLIENT_ID = "487656941972094997";
 const CLIENT_SECRET = "Fa1UwCXL5rZEadSFYnPK2w3b5QVtjQcx";
-const redirect = encodeURIComponent('http://localhost/callback');
+const redirect = encodeURIComponent('http://185.52.2.221//callback');
 
 function guildPerms(guildPerms) {
   var perms = {
