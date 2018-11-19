@@ -14,4 +14,8 @@ app.use(require('./controllers'))
 app.use('/', require('./middlewares/discord'));
 app.use('/', require('./middlewares/set-config'));
 
+app.use(function(req, res, next) {
+  res.render("404")
+});
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

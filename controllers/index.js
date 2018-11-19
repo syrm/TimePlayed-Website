@@ -22,6 +22,6 @@ staticPages.forEach(page => {
 
 
 router.use('/dashboard', require("./dashboard"))
-router.use('/profile', require("./profile"))
+// router.use('/profile', require("./profile"))
 
 module.exports = router
