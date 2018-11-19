@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>TimePlayed - Server dashboard</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/dashboard/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="/dashboard/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="/dashboard/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="/dashboard/morrisjs/morris.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="/dashboard/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <% include ./partials/nav %>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Dashboard</h1>
+                    <p>
+                        Welcome to the dashboard of <code><%= guilds.filter(function(e) {return e.id == id})[0].name %></code>. At this page, you can edit several settings very easily to make TimePlayed function even better in your server.
+                        <p>If the server you want to edit isn't listed in the list of servers, make sure you have the <code>Manage Server</code> permission in the server you want to edit, and then click the refresh button underneath the server list to refresh the list.</p>
+                    </p>
+                </div>
+                
+                <!-- /.col-lg-12 -->
+            </div>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="/dashboard/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/dashboard/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="/dashboard/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="/dashboard/raphael/raphael.min.js"></script>
+    <script src="/dashboard/morrisjs/morris.min.js"></script>
+    <%# <script src="/dashboard/data/morris-data.js"></script> %>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/dashboard/js/sb-admin-2.js"></script>
+
+</body>
+
+</html>

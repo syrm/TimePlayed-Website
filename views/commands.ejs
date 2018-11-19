@@ -1,0 +1,251 @@
+<!DOCTYPE HTML>
+<!--
+	Spectral by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>TimePlayed - Commands</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="css/main.css" />
+		<link rel="shortcut icon" type="image/png" href="/favicon.png"/>
+		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie8.css" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="css/ie9.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Page Wrapper -->
+			<div id="page-wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1><a href="/">TimePlayed</a></h1>
+							<% include ./partials/nav %>
+					</header>
+
+				<!-- Main -->
+					<article id="main">
+						<header>
+							<h2>Commands</h2>
+						</header>
+						<section class="wrapper style5">
+							<div class="inner">
+								<p>Welcome to my full command list. There are a few things you need to know:
+									<ul>
+										<li>() arguments are required, [] arguments are optional</li>
+										<li>My default prefix is <code>!!</code>, but if that prefix isn't working you can always use @TimePlayed as prefix</li>
+										<li>The [time] argument should be specified as a number with <code>m/h/d/w</code> behind it or as <code>today</code>, for example: <code>!!topPlayed 5d</code></li>
+										<li>The <code>(local/global)</code> argument represents where you want to change your privacy setting, the global value applies the setting to all servers you're in, the local value applies the setting only to the server you ran this command in. Please note that the local value will always override the global value.</li>
+										<li>Send me a private message with the <code>!!help (command name)</code> command to get a list of command aliases and the full description of the command</li>
+									</ul>
+									</p>
+								<h3>Playtime commands</h3>
+								<p>These are my public commands. Anyone can use them, without any extra permissions required.</p>
+								<table>
+									<tr>
+											<th>Command</th>
+											<th>Description</th>
+											<th>Syntax</th>
+											<th>PM support</th>
+									</tr>
+									<tr>
+											<td>timePlayed</td>
+											<td>View your playtime, of a specific game or in a specific time period</td>
+											<td><code>timePlayed [@user] [time] [game]</code></td>
+											<td>yes</td>
+									</tr>
+									<tr>
+											<td>topPlayed</td>
+											<td>Get a list of games you play the most</td>
+											<td><code>topPlayed [@user] [time]</code></td>
+											<td>yes</td>
+									</tr>
+									<tr>
+											<td>playing</td>
+											<td>Get a list of people playing a game in the current server</td>
+											<td><code>playing [game]</code></td>
+											<td>no</td>
+									</tr>
+									<tr>
+											<td>afk</td>
+											<td>Toggle your AFK status</td>
+											<td><code>afk </code></td>
+											<td>yes</td>
+									</tr>
+									<tr>
+											<td>lastPlayed</td>
+											<td>Check when someone last played a game</td>
+											<td><code>lastPlayed [@user] [game]</code></td>
+											<td>yes</td>
+									</tr>
+									<tr>
+											<td>status</td>
+											<td>View the status info of someone</td>
+											<td><code>status [@user]</code></td>
+											<td>yes</td>
+									</tr>
+									<tr>
+											<td>serverStats</td>
+											<td>Get some interesting stats of this server</td>
+											<td><code>serverStats [game]</code></td>
+											<td>no</td>
+									</tr>
+								</table>
+								<h3>General commands</h3>
+								<table>
+									<tr>
+											<th>Command</th>
+											<th>Description</th>
+											<th>Syntax</th>
+											<th>PM support</th>
+									</tr>
+									<tr>
+											<td>help</td>
+											<td>Get a list of all my commands</td>
+											<td><code>help </code></td>
+											<td>yes</td>
+									</tr>
+									<tr>
+											<td>removeGame</td>
+											<td>Completely remove a game from your playtime</td>
+											<td><code>removeGame (game)</code></td>
+											<td>yes</td>
+									</tr>
+									<tr>
+											<td>botinfo</td>
+											<td>Get some cool information about me</td>
+											<td><code>botinfo </code></td>
+											<td>yes</td>
+									</tr>
+									<tr>
+											<td>invite</td>
+											<td>Get a link to invite me to your server</td>
+											<td><code>invite </code></td>
+											<td>yes</td>
+									</tr>
+								</table>
+								<h3>Privacy commands</h3>
+								<table>
+									<tr>
+										<th>Command</th>
+										<th>Description</th>
+										<th>Syntax</th>
+										<th>PM support</th>
+									</tr>
+									<tr>
+										<td>setPrivacy</td>
+										<td>Change your playtime privacy settings</td>
+										<td><code>setPrivacy </code></td>
+										<td>no</td>
+									</tr>
+									<tr>
+										<td>acceptMessage</td>
+										<td>Get a Terms of Service message everyone can react to</td>
+										<td><code>acceptMessage </code></td>
+										<td>no</td>
+									</tr>
+									<tr>
+										<td>accept</td>
+										<td>Comfirm that you accept to my [Terms of Service](https://timeplayed.xyz/terms-of-service.html)</td>
+										<td><code>accept </code></td>
+										<td>yes</td>
+									</tr>
+									<tr>
+										<td>erase</td>
+										<td>Erase ALL your playtime data</td>
+										<td><code>erase </code></td>
+										<td>yes</td>
+									</tr>
+								</table>
+								<h3>Admin commands</h3>
+								<p>These are all of my server management commands. The <code>administrator</code> permission is required to run these commands, except for the <code>!!showRoles</code> command.</p>
+								<table>
+									<tr>
+										<th>Command</th>
+										<th>Description</th>
+										<th>Syntax</th>
+										<th>PM support</th>
+									</tr>
+									<tr>
+										<td>setConfig</td>
+										<td>Change a value of the server config</td>
+										<td><code>setConfig (key) (value)</code></td>
+										<td>no</td>
+									</tr>
+									<tr>
+										<td>showConfig</td>
+										<td>View the server config</td>
+										<td><code>showConfig </code></td>
+										<td>no</td>
+									</tr>
+									<tr>
+										<td>addRole</td>
+										<td>Automatically assign roles to users when they reach a specified amount of playtime in a period of time</td>
+										<td><code>addRole (@role/roleID/role Name) (time)/(time) [game]</code></td>
+										<td>no</td>
+									</tr>
+									<tr>
+										<td>removeRole</td>
+										<td>Remove a playtime role award</td>
+										<td><code>removeRole </code></td>
+										<td>no</td>
+									</tr>
+									<tr>
+										<td>showRoles</td>
+										<td>Show the roles award in this server</td>
+										<td><code>showRoles </code></td>
+										<td>no</td>
+									</tr>
+								</table>
+								<h3 id="role-awards">Role awards</h3>
+								<h4>Role awards? What does that mean?</h4>
+								<p>The role award system is a very cool feature of my bot. It basically assigns roles to your server members when they reach an amount of playtime of a specific game. You can specify in what time period they need to reach the playtime (e.a. 10h per week/20h per month), which game they need to play to get the role (e.a. Overwatch), and the role they will get awarded when they reach the amount of playtime (e.a. @Overwatch Tryhard)</p>
+								<h4>The easy way</h4>
+								<p style="margin-bottom: 10px"><strong>Before reading this tutorial:</strong> there's an easier way to add role awards. You can add role awards using an easy GUI tool on your <a href="/dashboard">server dashboard</a>. You should login, select a server and then you'll be able to easily manage role awards. So please try that tool out first, and if that doesn't work try the more complicated method!</p>
+								<h4>Adding a role award</h4>
+								<p style="margin-bottom: 10px">To add a role award, use the <code>!addRole (@role/roleID/role Name) (time)/(time) [game]</code> command.<br>
+								Here's a better explanation of the argument types:</p>
+								<ul style="margin-bottom: 10px">
+								<li>The <code>@role/roleID/role name</code> argument specifies the role you want to award to members. To make it simple I'd recommend you to simply use the role name (case sensitive) to add the role, or mention the role*</li>
+								<li>The <code>time/time</code> argument should be specified as two sinces, for example <code>3d/week</code>. The first <code>time</code> specifies how long users need to play the game, the second <code>time</code> specifies the time period they need to play the game in.</li>
+								<li>The <code>game</code> argument simply specifies which game members need to play to get the role awarded.</li>
+								</ul>
+								<blockquote>*Make sure that the specified role is lower than the bot's role and the bot has the <code>Manage Roles</code> permission to assign roles to server members.</blockquote>
+								<p>This may seem a bit complicated, if you still find it hard to understand please take a look at the example underneath.</p>
+								<h4>Example</h4>
+								<p>Let's say I want users to be awarded when they play a lot of Overwatch. Let's say they need to play it 10 hours per week to get the <code>Overwatch Tryhard</code> role in my super dope Overwatch server.<br>
+								To achieve this, I would have to run the command:<br>
+								<code>!!addRole Overwatch Tryhard 3d/week Overwatch</code> (or whatever your prefix is).</p>
+								<p><strong>That's it!</strong> If you have any feedback on this explanation or the role award system please let me know in the <a href="http://support.timeplayed.xyz" target="_blank">support server</a>.</p>
+							</div>
+						</section>
+					</article>
+
+				<!-- Footer -->
+				<footer id="footer">
+					<ul class="icons">
+						<li><a href="https://discordbots.org/bot/433625399398891541?" target="_blank" class="no-stripe"><img src="images/discordbots.png" style="width:30px"></a></li>
+						<li><a href="http://support.timeplayed.xyz" target="_blank" class="no-stripe"><img src="images/discord.png" style="width:30px"></a></li>
+						<li><a href="https://www.patreon.com/TimePlayed" target="_blank" class="no-stripe"><img src="images/patreon.png" style="width:30px"></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; Valentijn van Winden</li><li>Design: <a href="http://html5up.net" target="_blank">HTML5 UP</a></li>
+					</ul>
+				</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="js/jquery.min.js"></script>
+			<script src="js/jquery.scrollex.min.js"></script>
+			<script src="js/jquery.scrolly.min.js"></script>
+			<script src="js/skel.min.js"></script>
+			<script src="js/util.js"></script>
+			<!--[if lte IE 8]><script src="js/ie/respond.min.js"></script><![endif]-->
+			<script src="js/main.js"></script>
+
+	</body>
+</html>

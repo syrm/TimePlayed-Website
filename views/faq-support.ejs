@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<!--
+	Spectral by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>TimePlayed - FAQ/Support</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="css/main.css" />
+		<link rel="shortcut icon" type="image/png" href="/favicon.png"/>
+		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie8.css" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="css/ie9.css" /><![endif]-->
+		<style>
+			.accordion {
+				background-color: #eee;
+				color: #444;
+				cursor: pointer;
+				padding-left: 25px;
+				width: 100%;
+				border: none;
+				text-align: left;
+				outline: none;
+				font-size: 18px;
+				transition: 0.4s;
+				text-transform: none;
+				letter-spacing: 1px;
+			}
+
+			.panel {
+				padding: 5px 0 0 18px;
+				background-color: #efefef;
+				max-height: 0;
+				overflow: hidden;
+				transition: max-height 0.2s ease-out;
+				border-radius: 0 0 25px 25px;
+			}
+		</style>
+	</head>
+	<body>
+
+		<!-- Page Wrapper -->
+			<div id="page-wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1><a href="/">TimePlayed</a></h1>
+						<% include ./partials/nav %>
+					</header>
+
+				<!-- Main -->
+					<article id="main">
+						<header>
+							<h2>FAQ/support</h2>
+						</header>
+						<section class="wrapper style5">
+							<div class="inner">
+								<button class="accordion" id="notResponding">The bot is not responding to my commands, what do I do?</button>
+								<div class="panel">
+									<p style="margin-bottom: 0.2em">This problem can be caused by:
+									<ul style="margin-bottom: 0.2em">
+										<li>No read/send permissions for the bot in the current channel, please try to run the command in another channel or give the bot the <code>Read Messages</code> and <code>Send Messages</code> permission in the current channel</li>
+										<li>A wrong prefix usage, to get the current server's prefix you can mention @TimePlayed#3248 or use @TimePlayed#3248 as prefix for commands</li>
+										<li>The bot not being in the server you're trying to run the command in, <a href="https://discordapp.com/oauth2/authorize?client_id=433625399398891541&permissions=268446720&scope=bot" target="_BLANK">reinvite the bot</a>  if it's not in your server anymore for some reason</li>
+									</ul>
+									If all of the above things don't work and the bot won't respond to <code>!!help</code> in PM, the bot is probably offline due to issues/maintenance. Before reporting the problem, please check the #announcements channel in the support server to check if the issue is already known.
+									</p>
+								</div>
+
+								<button class="accordion" id="noGame">Why does the bot say I haven't played any game?</button>
+								<div class="panel">
+									<p style="margin-bottom: 0.2em">This can be caused by:</p>
+									<ul>
+										<li>Wrong spelling, please try the <code>topPlayed</code> command to see if you spelled the game correctly</li>
+										<li>The bot only logging your playtime for a short period, <strong>when the bot joins your server it will start measuring</strong>.</li>
+										<li>Discord being turned off while playing, that way Discord won't know you are playing a game so the bot will also not be able to log your playtime</li>
+										<li>Not properly configured game detection, please read <a href="https://support.discordapp.com/hc/en-us/articles/217960107-Games-Detection-101" target="_blank">this</a> article for Discord's game detection documentation</li>
+									</ul>
+								</div>
+
+								<button class="accordion" id="howDoIWork">How do you log my playtime?</button>
+								<div class="panel">
+									<h4 style="text-transform: none; letter-spacing: 1px; margin-bottom: 0.2em">Simple answer:</h4>
+									<p style="margin-bottom: 0.2em">I am logging your playtime with Discord presences, like you see in the memberlist on the right of Discord underneath usernames.<br>
+									In Discord go to <code>settings -> games</code> to add games, if your Discord status shows you're playing a game TimePlayed will register your playtime.<br>
+									More help about Discord game detection is located <a href="https://support.discordapp.com/hc/en-us/articles/217960107-Games-Detection-101" target="_blank">here</a>.</p>
+									<h4 style="text-transform: none; letter-spacing: 1px; margin-bottom: 0.2em">Complicated answer:</h4>
+									<p>Well, as the title says, the actual technique behind logging your playtime is a bit more complicated. If you have complexity disorder please just close this question for your own good.<br>
+									I'm logging your playtime in a <a href="https://www.mysql.com/" target="_blank">MySQL</a> database, which has two tables: currentUsers and playtime. In the currentusers I will log members who are currently playing a game, with the start date of when they started playing the game, and the game name as columns.<br>
+									The bot updates the tables every minute. When logging users, the first thing the bot will do is check for every member the bot is logging if they are playing a game.<br>
+								If they are playing a game, the bot will check if the game they are playing is the same as in the currentUsers table, if that is the case the bot will do nothing with that user, if it isn't the bot will remove the user's playtime from the currentUsers table, and insert it in the permanent playtime table, with the start date and current time (end date) of the game.</p>
+								</div>
+
+								<button class="accordion" id="premium">How do I get access to premium features?</button>
+								<div class="panel">
+									<p>To get full access to the bot, you can become a donator on my <a href="https://www.patreon.com/TimePlayed" target="_blank">Patreon page</a>. There you can check out all different premium plans and choose the one that fits your server. Of course donating isn't required, but it is much appreciated.<br>
+									Further instructions of premium membership are located in the #premium-info channel in the <a href="https://discord.gg/G7tEHXS" target="_blank">support server</a>.</p>
+								</div>
+
+								<button class="accordion" id="roleAwards">How does the "role award" feature work?</button>
+								<div class="panel">
+									<p>A full tutorial for role awards is located on <a href="commands.html#role-awards">this</a> page.</p>
+								</div>
+
+								<button class="accordion" id="privacy">How do I hide my playtime?</button>
+								<div class="panel">
+									<p style="margin-bottom: 0.2em">By default, your playtime isn't logged until you accept to the Terms of Service. To change your privacy settings after accepting to the terms:<br>
+										<ul style="margin-bottom: 0.2em">
+											<li>To change your privacy settings, please run the <code>setPrivacy</code> command. After running this command, further instructions will be given and then you will be able to change your privacy settings.<br></li>
+											<li>To erase all your data and prevent the bot from logging your playtime in the future, run the <code>erase</code> command. Be aware that this will erase all data I collected from you, so run at your own risk.<br></li>
+										</ul>
+								</div>
+							
+								
+								<script>
+								var acc = document.getElementsByClassName("accordion");
+								var i;
+								function extendItem(item) {
+									item.classList.toggle("active");
+									var panel = item.nextElementSibling;
+									if (panel.style.maxHeight){
+									panel.style.maxHeight = null;
+									} else {
+									panel.style.maxHeight = panel.scrollHeight + "px";
+									} 
+								}
+								if(window.location.hash) {
+									var item = document.getElementById(window.location.hash.substring(1))
+									if(item) {
+										extendItem(item)
+									}
+								}
+								for (i = 0; i < acc.length; i++) {
+									acc[i].addEventListener("click", function() {extendItem(this)});
+								}
+								</script>
+
+								<br>
+								<h3>Still no answer?</h3>
+								<p>If you're still having any trouble or unanswered questions, please contact me through the support server's support channels. You can join the support server by clicking down here, or clicking <a href="http://support.timeplayed.xyz" target="_blank">this</a> link.</p>
+								<iframe src="https://discordapp.com/widget?id=433531223244013572&theme=dark" width="350" height="300" allowtransparency="true" frameborder="0"></iframe>
+								
+							</div>
+						</section>
+					</article>
+
+				<!-- Footer -->
+				<footer id="footer">
+					<ul class="icons">
+						<li><a href="https://discordbots.org/bot/433625399398891541?" target="_blank" class="no-stripe"><img src="images/discordbots.png" style="width:30px"></a></li>
+						<li><a href="http://support.timeplayed.xyz" target="_blank" class="no-stripe"><img src="images/discord.png" style="width:30px"></a></li>
+						<li><a href="https://www.patreon.com/TimePlayed" target="_blank" class="no-stripe"><img src="images/patreon.png" style="width:30px"></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; Valentijn van Winden</li><li>Design: <a href="http://html5up.net" target="_blank">HTML5 UP</a></li>
+					</ul>
+				</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="js/jquery.min.js"></script>
+			<script src="js/jquery.scrollex.min.js"></script>
+			<script src="js/jquery.scrolly.min.js"></script>
+			<script src="js/skel.min.js"></script>
+			<script src="js/util.js"></script>
+			<!--[if lte IE 8]><script src="js/ie/respond.min.js"></script><![endif]-->
+			<script src="js/main.js"></script>
+
+	</body>
+</html>
