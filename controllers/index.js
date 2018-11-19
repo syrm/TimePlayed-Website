@@ -2,22 +2,21 @@ var express = require('express')
   , router = express.Router()
 
 
-
 router.get('/', function(req, res) {
   res.render('index');
 })
 
-var staticPages = [
-  "commands",
-  "faq-support",
-  "terms-of-service",
-  "getting-started"
-]
-
-staticPages.forEach(page => {
-  router.get('/' + page, function(req, res) {
-    res.render(page);
-  })
+router.get(/^\/commands(\.[^.]+)$/, function(req, res) {
+  res.render("commands");
+})
+router.get(/^\/faq-support(\.[^.]+)$/, function(req, res) {
+  res.render("faq-support");
+})
+router.get(/^\/terms-of-service(\.[^.]+)$/, function(req, res) {
+  res.render("terms-of-service");
+})
+router.get(/^\/getting-started(\.[^.]+)$/, function(req, res) {
+  res.render("getting-started");
 })
 
 
