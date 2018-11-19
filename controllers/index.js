@@ -6,16 +6,16 @@ router.get('/', function(req, res) {
   res.render('index');
 })
 
-router.get(/^\/commands(\.[^.]+)$/, function(req, res) {
+router.get(/^\/commands(\.[^.]+)?$/, function(req, res) {
   res.render("commands");
 })
-router.get(/^\/faq-support(\.[^.]+)$/, function(req, res) {
+router.get(/^\/faq-support(\.[^.]+)?$/, function(req, res) {
   res.render("faq-support");
 })
-router.get(/^\/terms-of-service(\.[^.]+)$/, function(req, res) {
+router.get(/^\/terms-of-service(\.[^.]+)?$/, function(req, res) {
   res.render("terms-of-service");
 })
-router.get(/^\/getting-started(\.[^.]+)$/, function(req, res) {
+router.get(/^\/getting-started(\.[^.]+)?$/, function(req, res) {
   res.render("getting-started");
 })
 
