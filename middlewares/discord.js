@@ -80,8 +80,10 @@ router.get('/callback', catchAsync(async (req, res) => {
   var token = json.access_token;
   req.session.discordToken = token;
   Discord.getUserInfo(token, function(userInfo) {
+    console.log(userInfo);
     req.session.userInfo = userInfo;
     Discord.getUserGuilds(token, function(userGuilds) {
+      console.log(userGuilds);
       userGuilds = userGuilds.filter(e => {return guildPerms(e.permissions)});
       req.session.userGuilds = userGuilds;
       if(req.session.redirect) {
