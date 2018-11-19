@@ -4,7 +4,7 @@ const btoa = require('btoa');
 const { catchAsync } = require('../utils');
 
 const Discord = require('../models/discord')
-const keys = requite("../keys.json");
+const keys = require("../keys.json");
 const router = express.Router();
 
 const CLIENT_ID = keys.clientId;
