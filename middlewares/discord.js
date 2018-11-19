@@ -4,12 +4,12 @@ const btoa = require('btoa');
 const { catchAsync } = require('../utils');
 
 const Discord = require('../models/discord')
-
+const keys = requite("../keys.json");
 const router = express.Router();
 
-const CLIENT_ID = "487656941972094997";
-const CLIENT_SECRET = "Fa1UwCXL5rZEadSFYnPK2w3b5QVtjQcx";
-const redirect = encodeURIComponent('http://185.52.2.221/callback');
+const CLIENT_ID = keys.clientId;
+const CLIENT_SECRET = keys.clientSecret;
+const redirect = encodeURIComponent(keys.callbackUrl);
 
 function guildPerms(guildPerms) {
   var perms = {
@@ -62,10 +62,8 @@ router.get('/login', (req, res) => {
 });
 
 router.get('/callback', catchAsync(async (req, res) => {
-  if (!req.query.code && req.query.error) {
+  if (!req.query.code || req.query.error) {
     return res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=identify%20guilds&response_type=code&redirect_uri=${redirect}`);
-  } else if(!req.query.code) {
-    throw new Error('NoCodeProvided');
   }
   const code = req.query.code;
   const creds = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
@@ -80,10 +78,8 @@ router.get('/callback', catchAsync(async (req, res) => {
   var token = json.access_token;
   req.session.discordToken = token;
   Discord.getUserInfo(token, function(userInfo) {
-    console.log(userInfo);
     req.session.userInfo = userInfo;
     Discord.getUserGuilds(token, function(userGuilds) {
-      console.log(userGuilds);
       userGuilds = userGuilds.filter(e => {return guildPerms(e.permissions)});
       req.session.userGuilds = userGuilds;
       if(req.session.redirect) {
