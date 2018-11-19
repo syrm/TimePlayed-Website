@@ -1,10 +1,10 @@
 var request = require('request');
-
+var keys = require('../keys.json')
 
 exports.botRequest = function(path, callback) {
   request.get(`https://discordapp.com/api/${path}`, {
     headers: {
-      'authorization': 'Bot NDMzNjI1Mzk5Mzk4ODkxNTQx.DsWGZg.AkFkwT0hxGlMCasFem5hvLoeARY'
+      'authorization': `Bot ${keys.botToken}`
     }
   }, function (error, response, body) {
     callback(JSON.parse(body))
