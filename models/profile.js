@@ -1,13 +1,12 @@
 var mysql = require('mysql')
 var keys = require('../keys');
-var connection = mysql.createConnection({
+var connection = mysql.createPool({
+  connectionLimit : 20,
   host     : keys.mysqlhost,
   user     : keys.mysqluser,
   password : keys.mysqlpasswd,
   database : 'timeplayed'
 });
-
-connection.connect();
 
 exports.checkPrivate = function(userID, callback) {
   connection.query("SELECT count(*) FROM privateUsers WHERE userID=? ", [userID], function(error, results, fields) {

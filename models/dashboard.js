@@ -1,7 +1,8 @@
 var mysql = require('mysql')
 var keys = require('../keys');
 var fs = require('fs');
-var connection = mysql.createConnection({
+var connection = mysql.createPool({
+  connectionLimit : 20,
   host     : keys.mysqlhost,
   user     : keys.mysqluser,
   password : keys.mysqlpasswd,
@@ -9,8 +10,6 @@ var connection = mysql.createConnection({
   supportBigNumbers: true,
   charset: "utf8mb4"
 });
-
-connection.connect();
 
 exports.getConfig = function(guildID, callback) {
   connection.query("SELECT * FROM guildSettings WHERE guildID=?", [guildID], function(error, results, fields) {
