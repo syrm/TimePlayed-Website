@@ -83,7 +83,7 @@ router.get(/^\/([0-9]{18})\/?(general|leaderboard|role-awards)?$/, function(req,
       })
     })
   } else {
-    res.redirect(`/dashboard`);
+    res.redirect(`/login?redirect=${encodeURIComponent(req.originalUrl)}`);
   }
 })
 
