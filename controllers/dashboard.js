@@ -18,7 +18,7 @@ router.get(/^\/([0-9]{18})\/?(general|leaderboard|role-awards)?$/, function(req,
 
   var userGuilds = req.session.userGuilds;
 
-  if(userGuilds) {
+  if(userGuilds && userGuilds.map(e => {return e.id}).includes(guildID)) {
     Dashboard.getConfig(guildID, function(guildConf) {
       if(!guildConf) {
         return res.redirect(`https://discordapp.com/oauth2/authorize?client_id=433625399398891541&scope=bot&permissions=268708928&guild_id=${req.params[0]}`);
@@ -82,6 +82,8 @@ router.get(/^\/([0-9]{18})\/?(general|leaderboard|role-awards)?$/, function(req,
         }
       })
     })
+  } else if(userGuilds && !userGuilds.map(e => {return e.id}).includes(guildID)) {
+    res.redirect('/dashboard');
   } else {
     res.redirect(`/login?redirect=${encodeURIComponent(req.originalUrl)}`);
   }
