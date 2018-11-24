@@ -95,8 +95,12 @@ router.get('/logout', (req, res) => {
   req.session.discordToken = undefined;
   req.session.userGuilds = undefined;
   req.session.userInfo = undefined;
-  if(req.query.redirect) {
-    res.redirect(decodeURIComponent(req.query.redirect));
+  var url = decodeURIComponent(req.query.redirect);
+  var reg = /^\/dashboard\/([0-9]{18})\/?(general|leaderboard|role-awards)?$/;
+  if(req.query.redirect && !url.match(reg)) {
+    res.redirect(url);
+  } else if(url.match(reg)) {
+    res.redirect('/dashboard')
   } else {
     res.redirect('/')
   }
