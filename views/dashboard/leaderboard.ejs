@@ -525,7 +525,7 @@
             <% include ./partials/save-changes %>
             <script>
                 $('textarea, input').on('input', function() {
-                    if(input.id == "enablePreview") return;
+                    if(this.id == "enablePreview") return;
                     saveText(this);
                 })
                 $('select').on('change', function() {
