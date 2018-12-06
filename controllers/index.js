@@ -3,6 +3,10 @@ var express = require('express')
 
 
 router.get('/', function(req, res) {
+  var XFRAME_WHITELIST = [ 'https://discordbots.org'];
+  if (XFRAME_WHITELIST.indexOf(req.query.domain) !== -1) {
+    res.header('X-FRAME-OPTIONS', 'ALLOW-FROM ' + req.query.domain);
+  }
   res.render('index');
 })
 
