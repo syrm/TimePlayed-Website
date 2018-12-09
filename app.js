@@ -10,9 +10,6 @@ app.use(cookieParser());
 app.use(session({secret: "SFJSDF4cvn4DSAFSF456f654xcv132Fsxc34dsFxcsfd"}));
 
 app.use(express.static(__dirname + '/public'))
-app.use(require('./controllers'))
-app.use('/', require('./middlewares/discord'));
-app.use('/', require('./middlewares/set-config'));
 
 app.use(function(req, res, next) {
   res.render("404")
