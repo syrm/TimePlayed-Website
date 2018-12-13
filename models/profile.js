@@ -22,9 +22,9 @@ exports.topGames = function(id, since, callback) {
   } else {
     since = new Date("January 01, 1970 00:00:00")
   }
-  var where = " WHERE userID=?"
+  var where = " AND userID=?"
   if(!id) where = ""
-  connection.query(`SELECT * FROM playtime${where}`, [id], function(error, results, fields) {
+  connection.query(`SELECT * FROM playtime WHERE startDate > ?${where}`, [since, id], function(error, results, fields) {
     var games = [];
     results.forEach(function(result, i) {
       if(!result.endDate) {
@@ -51,6 +51,7 @@ exports.topGames = function(id, since, callback) {
           games.push({game: result.game, time: Math.floor(diffMS / 1000)})
       }
     })
+    games.splice(10);
     games.sort(function(a, b){return b.time-a.time});
     connection.query("SELECT game, iconURL FROM gameIcons WHERE game IN (?)", [games.map(e => {return e.game})], function(error, results, fields) {
       games.forEach((game, i) => {

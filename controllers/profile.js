@@ -3,12 +3,14 @@ var express = require('express')
   , Profile = require('../models/profile')
   , Discord = require('../models/discord')
 
+
 router.get("/", function(req, res) {
   Profile.random(function(randoms) {
     Discord.bulkUserInfo(randoms, function(randomUsers) {
       res.render("profile", {
         userInfo: req.session.userInfo,
-        randomUsers: randomUsers
+        randomUsers: randomUsers,
+        topGames: topGames
       })
     })
   })
