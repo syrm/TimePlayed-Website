@@ -6,6 +6,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
+        <a href="/" class="navbar-brand fa fa fa-arrow-circle-left"></a>
         <a class="navbar-brand" href="/dashboard">TimePlayed Dashboard</a>
     </div>
     <!-- /.navbar-header -->
@@ -42,7 +43,7 @@
                             function process() {
                                 var guildID = document.getElementById("guildID").value;
                                 var url = "<%= url %>";
-                                var regex = /[0-9]{18}/gi;
+                                var regex = /[0-9]{17,18}/gi;
                                 url = url.replace(regex, guildID)
                                 if(!regex.test(url)) url += guildID;
                                 location.href=url;

@@ -127,8 +127,8 @@
 							<div class="inner">
 							<section style="position: relative">
                                 Hi there! Unfortunately, <%= user.username %> has set their playtime profile to private.<br>
-                                If you are <%= user.username %>, please <a href="/login?redirect=/profile/me">login</a> as <%= user.username %> and try again.<br>
-                                If you are not <%= user.username %>, you'll have to ask <%= user.username %> to set their profile to public, otherwise I can't show you this profile.
+                                If you own this account, please <a href="/login?redirect=/profile/me">login</a> and try again.<br>
+                                If you do not own this account, you'll have to ask <%= user.username %> to set their profile to public, otherwise I can't show you this profile.
 							</section>
 							</div>
 						</section>

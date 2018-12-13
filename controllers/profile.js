@@ -4,18 +4,25 @@ var express = require('express')
   , Discord = require('../models/discord')
 
 router.get("/", function(req, res) {
-  res.render("profile")
+  Profile.random(function(randoms) {
+    Discord.bulkUserInfo(randoms, function(randomUsers) {
+      res.render("profile", {
+        userInfo: req.session.userInfo,
+        randomUsers: randomUsers
+      })
+    })
+  })
 })
 
-router.get(/^\/([0-9]{18})\/?$/, function(req, res) {
+router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
   var id = req.params[0];
   Discord.botRequest(`users/${id}`, function(user) {
     if(user.code) {
-      res.render("profile/not-found", {id: id})
+      res.render("profile/not-found", {id: id, userInfo: req.session.userInfo})
     } else {
       Profile.checkPrivate(id, function(private) {
         if(private) {
-          res.render("profile/private", {user: user})
+          res.render("profile/private", {user: user, userInfo: req.session.userInfo})
         } else {
           Profile.topGames(id, req.query.since, function(topGames) {
             var totalHours = 0;
@@ -27,7 +34,8 @@ router.get(/^\/([0-9]{18})\/?$/, function(req, res) {
               user: user,
               since: req.query.since,
               topGames: topGames,
-              totalHours: totalHours
+              totalHours: totalHours,
+              userInfo: req.session.userInfo
             })
           })
         }

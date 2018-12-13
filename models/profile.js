@@ -5,7 +5,8 @@ var connection = mysql.createPool({
   host     : keys.mysqlhost,
   user     : keys.mysqluser,
   password : keys.mysqlpasswd,
-  database : 'timeplayed'
+  database : 'timeplayed',
+  supportBigNumbers: true
 });
 
 exports.checkPrivate = function(userID, callback) {
@@ -21,7 +22,9 @@ exports.topGames = function(id, since, callback) {
   } else {
     since = new Date("January 01, 1970 00:00:00")
   }
-  connection.query(`SELECT * FROM playtime WHERE userID=?`, [id], function(error, results, fields) {
+  var where = " WHERE userID=?"
+  if(!id) where = ""
+  connection.query(`SELECT * FROM playtime${where}`, [id], function(error, results, fields) {
     var games = [];
     results.forEach(function(result, i) {
       if(!result.endDate) {
@@ -56,5 +59,12 @@ exports.topGames = function(id, since, callback) {
       })
       return callback(games)
     })
+  })
+}
+
+exports.random = function(callback) {
+  connection.query("SELECT userID FROM timeplayed.playtime WHERE startDate BETWEEN DATE_SUB(NOW(), INTERVAL 1 DAY) AND NOW() AND `userID` NOT IN (SELECT userID FROM timeplayed.privateUsers) ORDER BY RAND() LIMIT 3", function(error, results, fields) {
+    if(results.length > 0) results = results.map(e => e.userID)
+    callback(results);
   })
 }

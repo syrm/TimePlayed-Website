@@ -15,7 +15,9 @@ app.use('/', require('./middlewares/discord'));
 app.use('/', require('./middlewares/set-config'));
 
 app.use(function(req, res, next) {
-  res.render("404")
+  res.render("404", {
+    userInfo: req.session.userInfo
+  });
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}!`))

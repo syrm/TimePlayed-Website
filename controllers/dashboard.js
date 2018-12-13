@@ -7,11 +7,12 @@ router.get('/', function(req, res) {
   userGuilds = req.session.userGuilds;
   res.render('dashboard', {
     guilds: userGuilds,
-    url: req.originalUrl
+    url: req.originalUrl,
+    userInfo: req.session.userInfo
   })
 })
 
-router.get(/^\/([0-9]{18})\/?(general|leaderboard|role-awards)?$/, function(req, res) {
+router.get(/^\/([0-9]{17,18})\/?(general|leaderboard|role-awards)?$/, function(req, res) {
   var guildID = req.params[0];
   var page = req.params[1];
   if(!page) page = "server-index";
@@ -34,7 +35,8 @@ router.get(/^\/([0-9]{18})\/?(general|leaderboard|role-awards)?$/, function(req,
               id: guildID,
               guilds: userGuilds,
               premium: premium,
-              channels: channels
+              channels: channels,
+              userInfo: req.session.userInfo
             })
           })
         } else if(page == "role-awards") {
@@ -66,7 +68,8 @@ router.get(/^\/([0-9]{18})\/?(general|leaderboard|role-awards)?$/, function(req,
                   roleAwards: roleAwards,
                   guildRoles: roles,
                   roleOptions: roleOptions,
-                  manageRoles: manageRoles
+                  manageRoles: manageRoles,
+                  userInfo: req.session.userInfo
                 })
               })
             })
@@ -77,7 +80,8 @@ router.get(/^\/([0-9]{18})\/?(general|leaderboard|role-awards)?$/, function(req,
             url: req.originalUrl,
             id: guildID,
             guilds: userGuilds,
-            premium: premium
+            premium: premium,
+            userInfo: req.session.userInfo
           })
         }
       })

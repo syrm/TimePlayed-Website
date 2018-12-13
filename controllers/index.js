@@ -3,25 +3,34 @@ var express = require('express')
 
 
 router.get('/', function(req, res) {
-  res.header('X-FRAME-OPTIONS', 'ALLOW-FROM https://discordbots.org/');
-  res.render('index');
+  res.render('index', {
+    userInfo: req.session.userInfo
+  });
 })
 
 router.get(/^\/commands(\.[^.]+)?$/, function(req, res) {
-  res.render("commands");
+  res.render("commands", {
+    userInfo: req.session.userInfo
+  });
 })
 router.get(/^\/faq-support(\.[^.]+)?$/, function(req, res) {
-  res.render("faq-support");
+  res.render("faq-support", {
+    userInfo: req.session.userInfo
+  });
 })
 router.get(/^\/terms-of-service(\.[^.]+)?$/, function(req, res) {
-  res.render("terms-of-service");
+  res.render("terms-of-service", {
+    userInfo: req.session.userInfo
+  });
 })
 router.get(/^\/getting-started(\.[^.]+)?$/, function(req, res) {
-  res.render("getting-started");
+  res.render("getting-started", {
+    userInfo: req.session.userInfo
+  });
 })
 
 
 router.use('/dashboard', require("./dashboard"))
-// router.use('/profile', require("./profile"))
+router.use('/profile', require("./profile"))
 
 module.exports = router

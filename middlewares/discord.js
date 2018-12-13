@@ -96,7 +96,7 @@ router.get('/logout', (req, res) => {
   req.session.userGuilds = undefined;
   req.session.userInfo = undefined;
   var url = decodeURIComponent(req.query.redirect);
-  var reg = /^\/dashboard\/([0-9]{18})\/?(general|leaderboard|role-awards)?$/;
+  var reg = /^\/dashboard\/([0-9]{17,18})\/?(general|leaderboard|role-awards)?$/;
   if(req.query.redirect && !url.match(reg)) {
     res.redirect(url);
   } else if(url.match(reg)) {

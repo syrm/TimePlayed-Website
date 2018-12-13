@@ -11,6 +11,25 @@ exports.botRequest = function(path, callback) {
   });
 }
 
+exports.bulkUserInfo = function(ids, callback) {
+  var responses = [];
+  var completed_requests = 0;
+  for (i in ids) {
+    request.get(`https://discordapp.com/api/users/${ids[i]}`, {
+      headers: {
+        'authorization': `Bot ${keys.botToken}`
+      }
+    }, function (error, response, body) {
+      responses.push(JSON.parse(body));
+        completed_requests++;
+        if (completed_requests == ids.length) {
+            responses.filter(e => !e.message)
+            callback(responses);
+        }
+    });
+  }
+}
+
 exports.getUserInfo = function(token, callback) {
   if(!token) return callback(false);
   request.get('https://discordapp.com/api/v6/users/@me', {

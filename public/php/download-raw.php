@@ -19,7 +19,7 @@
 
 	$userID = $_GET["id"];
 
-	if($userID === "" || !preg_match("/[0-9]{18}/", $userID)) {
+	if($userID === "" || !preg_match("/[0-9]{17,18}/", $userID)) {
 		die("Invalid or no ID formatting!");
 	}
 	$stmt = $conn->prepare("SELECT game, DATE_FORMAT(startDate, '%d-%m-%Y %H:%i'), DATE_FORMAT(endDate, '%d-%m-%Y %H:%i') FROM playtime WHERE userID=?");

@@ -1,4 +1,16 @@
-<nav id="nav">
+<nav id="nav" style="display: flex; justify-content: center; text-align: center;">
+<script>
+    function action(num) {
+        var url = encodeURI(window.location.pathname);
+        if(num == 0) window.location.href = "/logout?redirect=" + url;
+        if(num == 1) window.location.href = "/login?redirect=" + url;
+    }
+</script>
+<% if(userInfo) { %>
+<a class="no-stripe" onclick="return action(0)" href="#" style="letter-spacing: 0.225em; text-transform: uppercase; font-size: 0.8em; margin-top: 1px">Logout</a>
+<% } else { %>
+<a class="no-stripe" onclick="return action(1)" href="#" style="letter-spacing: 0.225em; text-transform: uppercase; font-size: 0.8em; margin-top: 1px">Login</a>
+<% } %>
     <ul>
         <li class="special">
             <a href="#menu" class="menuToggle"><span>Menu</span></a>
@@ -7,7 +19,7 @@
                     <li><a href="/">Home</a></li>
                     <li><a href="/getting-started">Getting started</a></li>
                     <li><a href="/commands">Commands</a></li>
-                    <%# <li><a href="/profile">Profiles</a></li> %>
+                    <li><a href="/profile">Profiles</a></li>
                     <%# <li><a href="/server">Servers</a></li> %>
                     <li><a href="/dashboard">Dashboard</a></li>
                     <li><a href="/faq-support">FAQ/Support</a></li>

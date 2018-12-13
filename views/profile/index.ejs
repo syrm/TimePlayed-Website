@@ -99,6 +99,41 @@
 		<!--[if lte IE 8]><link rel="stylesheet" href="/css/ie8.css" /><![endif]-->
 		<!--[if lte IE 9]><link rel="stylesheet" href="/css/ie9.css" /><![endif]-->
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+		<style>
+			.row {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+
+			.column {
+				width: 380px;
+				margin: 10px;
+				padding-top: 10px;
+				padding-bottom: 10px;
+				border-radius: 10px;
+				background-color: #333435;
+				text-align: center;
+				color: white;
+				display: flex;
+				align-items: center;
+				justify-content: flex-start;
+			}
+
+			.column p {
+				margin-bottom: 0px;
+			}
+
+			.box-icon {
+				border-radius: 50%;
+				width: 100px;
+				height: 100px;
+				color: white;
+				border: 5px solid
+			}
+		</style>
 	</head>
 	<body>
 
@@ -120,8 +155,19 @@
 						<section class="wrapper style5" style="padding-top: 3em;">
 							<div class="inner">
 							<section style="position: relative">
-								<!-- Login/index page -->
-								Hoi!
+								<h2>Random public profiles:</h2>
+								<div class="row">
+									<% for(i = 0; i < randomUsers.length; i++) { %>
+										<div class="column">
+											<div class="box-icon">
+												<a href="/profile/<%=randomUsers[i].id%>" class="no-stripe"><img src="<%= `https://cdn.discordapp.com/avatars/${randomUsers[i].id}/${randomUsers[i].avatar}.png` %>" style="width: 90px; border-radius: 50%"></a>
+											</div>
+											<div style="margin-left: 10px">
+												<a href="/profile/<%=randomUsers[i].id%>"><p style="font-size: 28px;"><%=randomUsers[i].username%><span style="font-size: 17px;">#<%=randomUsers[i].discriminator%></span></p></a>
+											</div>
+										</div>
+									<% } %>
+								</div>
 							</section>
 							</div>
 						</section>

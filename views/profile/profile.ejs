@@ -27,6 +27,9 @@
 				background-color: #333435;
 				text-align: center;
 				color: white;
+				display: flex;
+				align-items: center;
+				justify-content: flex-start;
 			}
 
 			.column p {
@@ -99,10 +102,7 @@
 				border-radius: 50%;
 				width: 100px;
 				height: 100px;
-				margin-top: -60px;
 				color: white;
-				margin-left: auto;
-				margin-right: auto;
 				border: 5px solid
 			}
 
@@ -144,50 +144,55 @@
 					<header id="header">
 						<h1><a href="/">TimePlayed</a></h1>
 						<% include ../partials/nav %>
-						
 					</header>
 
 				<!-- Main -->
 					<article id="main">
 						<header>
-							<h2><?php
-								echo $userObj["username"] . "'s profile";
-							?></h2>
+							<h2><%= user.username %>'s profile</h2>
 						</header>
 						<section class="wrapper style5" style="padding-top: 3em;">
 							<div class="inner">
 							<section style="position: relative">
-
 								<form action="">
 									Since:<br>
-									<input type="date" name="since" style="color: black">
+									<input type="date" name="since" style="color: black" onchange="this.form.submit()">
 									<script>
 										var today = new Date().toISOString().split('T')[0];
-										document.getElementsByName("since")[0].setAttribute('max', today);
+										var input = document.getElementsByName("since")[0];
+										input.setAttribute('max', today);
+										input.value = since;
 									</script>
-									<input type="submit" value="Apply" style="height: 50px;">
 								</form>
 								<!-- Displaying the user info/playtime data -->
 								<div class="row">
 									<div class="column">
 										<div class="box-icon">
-											<img src="<%= `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` %>" style="width: 100%; border-radius: 50%">
+											<img src="<%= `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` %>" style="width: 90px; border-radius: 50%">
 										</div>
-										<p style="font-size: 30px; margin-top: 10px"><%= `${user.username}#${user.discriminator}` %></p>
+										<div style="margin-left: 10px">
+											<p style="font-size: 28px;"><%=user.username%><span style="font-size: 17px;">#<%=user.discriminator%></span></p>
+										</div>
+										
 									</div>
 									<div class="column">
 										<div class="box-icon" style="background: linear-gradient(60deg, red,blue);">
 											<i class="icon fa-gamepad" style="font-size: 70px; line-height: 83px;"></i>
 										</div>
-										<p style="font-size: 15px; margin-top: 0px;">Total games played:</p>
-										<p class="large-stand-out"><script>document.write(topGames.length)</script></p>
+										<div style="flex: 1">
+											<p style="font-size: 15px;">Total games played:</p>
+											<p class="large-stand-out"><script>document.write(topGames.length)</script></p>
+										</div>
+										
 									</div>
 									<div class="column">
 										<div class="box-icon" style="background: linear-gradient(10deg, green,blue);">
 											<i class="icon fa-clock-o" style="font-size: 70px; line-height: 86px;"></i>
 										</div>
-										<p style="font-size: 15px; margin-top: 0px;">Total hours:</p>
-										<p class="large-stand-out"><%= totalHours %></p>
+										<div style="flex: 1">
+											<p style="font-size: 15px; margin-top: 0px;">Total hours played:</p>
+											<p class="large-stand-out"><%= totalHours %></p>
+										</div>
 									</div>
 								</div>
 								<h2>Top 3 games:</h2>
@@ -221,7 +226,15 @@
 											return h + comma +  m + and + s
 										}
 										function format(i) {
-											document.write( '<div class="column"><img src=\'' + topGames[i].iconURL + '\' style="width: 50px;" align="left" vertical-align="middle">\n<p class="game">' + topGames[i].game + '</p>\n<p class="time">' + time(topGames[i].time) + '</p></div>')
+											var str = '<div class="column">\n'
+											// Icon
+											if(topGames[i].iconURL) str += '<div><img src=\'' + topGames[i].iconURL + '\' style="width: 50px;" align="left" vertical-align="middle"></div>\n'
+											// Game name / time
+											str += '<div style="flex: 1"><p class="game">' + topGames[i].game + '</p>\n<p class="time">' + time(topGames[i].time) + '</p></div>'
+
+											str += '</div>'
+
+											document.write(str)
 										}
 										format(0)
 										format(1)
@@ -259,7 +272,7 @@
 									
 
 								</script>
-								<div id="piechart"></div>
+								<div id="piechart" style="width: 100%"></div>
 							<table id="topGamesTable" class="display" >  
 									<thead> 
 									<tr>
@@ -269,7 +282,6 @@
 									</tr>
 									</thead>
 									<tbody>
-										
 									</tbody>
 							</table>
 
@@ -305,7 +317,7 @@
 										bInfo: false,
 										searching: false
 									});
-									if(!since) {
+									/* if(!since) {
 										var table = $("#topDaysTable").find('tbody')
 										topDays.forEach(function(obj, i) {
 											i = i + 1;
@@ -319,7 +331,7 @@
 										});
 									} else {
 										$("#gamingfulDays").html("<p>Only available <a onclick='return removeSince()'>without since date</a> specified</p>");
-									}
+									} */
 									
 								});
 							</script>
