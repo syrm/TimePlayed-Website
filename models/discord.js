@@ -21,11 +21,11 @@ exports.bulkUserInfo = function(ids, callback) {
       }
     }, function (error, response, body) {
       responses.push(JSON.parse(body));
-        completed_requests++;
-        if (completed_requests == ids.length) {
-            responses.filter(e => !e.message)
-            callback(responses);
-        }
+      completed_requests++;
+      if (completed_requests == ids.length) {
+        responses = responses.filter(e => !e.message)
+        callback(responses);
+      }
     });
   }
 }

@@ -9,8 +9,7 @@ router.get("/", function(req, res) {
     Discord.bulkUserInfo(randoms, function(randomUsers) {
       res.render("profile", {
         userInfo: req.session.userInfo,
-        randomUsers: randomUsers,
-        topGames: topGames
+        randomUsers: randomUsers
       })
     })
   })

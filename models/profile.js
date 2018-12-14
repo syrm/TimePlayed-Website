@@ -16,7 +16,7 @@ exports.checkPrivate = function(userID, callback) {
   })
 }
 
-exports.topGames = function(id, since, callback) {
+exports.topGames = function(id, since, callback, limit) {
   if(since) {
     since = new Date(since)
   } else {
@@ -51,7 +51,7 @@ exports.topGames = function(id, since, callback) {
           games.push({game: result.game, time: Math.floor(diffMS / 1000)})
       }
     })
-    games.splice(10);
+    if(limit) games.splice(limit);
     games.sort(function(a, b){return b.time-a.time});
     connection.query("SELECT game, iconURL FROM gameIcons WHERE game IN (?)", [games.map(e => {return e.game})], function(error, results, fields) {
       games.forEach((game, i) => {
@@ -64,8 +64,12 @@ exports.topGames = function(id, since, callback) {
 }
 
 exports.random = function(callback) {
-  connection.query("SELECT userID FROM timeplayed.playtime WHERE startDate BETWEEN DATE_SUB(NOW(), INTERVAL 1 DAY) AND NOW() AND `userID` NOT IN (SELECT userID FROM timeplayed.privateUsers) ORDER BY RAND() LIMIT 3", function(error, results, fields) {
+  connection.query("SELECT userID FROM timeplayed.playtime WHERE startDate BETWEEN DATE_SUB(NOW(), INTERVAL 1 DAY) AND NOW() AND `userID` NOT IN (SELECT userID FROM timeplayed.privateUsers) ORDER BY RAND() LIMIT 5", function(error, results, fields) {
     if(results.length > 0) results = results.map(e => e.userID)
+    results = results.filter(function(item, pos, self) {
+      return self.indexOf(item) == pos;
+    })
+    results.splice(3);
     callback(results);
   })
 }
