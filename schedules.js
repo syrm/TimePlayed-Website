@@ -66,4 +66,4 @@ function updateGames() {
     })
   })
 }
-// updateGames();
+updateGames();
