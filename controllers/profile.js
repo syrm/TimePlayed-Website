@@ -8,12 +8,12 @@ router.get("/", function(req, res) {
   Profile.random(6, function(randoms) {
     Discord.bulkUserInfo(randoms, function(randomUsers) {
       Profile.topGamesDb(7, function(topGamesWeek) {
-        Profile.topGamesDb(1, function(topGamesDay) {
+        Profile.topGamesDb(30, function(topGamesMonth) {
           res.render("profile", {
             userInfo: req.session.userInfo,
             randomUsers: randomUsers,
             topGamesWeek: topGamesWeek,
-            topGamesDay: topGamesDay
+            topGamesMonth: topGamesMonth
           })
         })
       })

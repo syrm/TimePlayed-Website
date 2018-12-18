@@ -10,8 +10,6 @@ var connection = mysql.createPool({
 });
 
 function updateTopGames(since, callback) {
-  since = since * 24;
-  console.log(since)
   console.log("Selecting all games...")
   connection.query("SELECT game FROM knownGames;", function(error, results, fields) {
     var gameArr = results.map(e => e.game)
@@ -20,9 +18,9 @@ function updateTopGames(since, callback) {
     gameArr.forEach((game, i) => {
       var comma = ","
       if(i == gameArr.length - 1) comma = "";
-      q += `(SELECT COUNT(DISTINCT userID) FROM playtime WHERE game=? AND endDate > NOW() - INTERVAL ? HOUR) as ?,`
+      q += `(SELECT COUNT(DISTINCT userID) FROM playtime WHERE game=? AND endDate > NOW() - INTERVAL ? DAY) as ?,`
       escapes.push(game, since, game + "_count")
-      q += `(SELECT SUM(TIMESTAMPDIFF(SECOND, startDate, endDate)) / 3600 FROM playtime WHERE game=? AND endDate > NOW() - INTERVAL ? HOUR) as ?${comma}`
+      q += `(SELECT SUM(TIMESTAMPDIFF(SECOND, startDate, endDate)) / 3600 FROM playtime WHERE game=? AND endDate > NOW() - INTERVAL ? DAY) as ?${comma}`
       escapes.push(game, since, game + "_time")
     })
     console.log("Calculating playtime...")
@@ -60,8 +58,8 @@ function updateTopGames(since, callback) {
 }
 
 function updateGames() {
-  updateTopGames(1, function() {
-    updateTopGames(7, function() {
+  updateTopGames(7, function() {
+    updateTopGames(30, function() {
       setTimeout(updateGames, 600000)
     })
   })
