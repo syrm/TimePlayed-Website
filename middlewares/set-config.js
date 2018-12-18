@@ -76,7 +76,7 @@ router.post(/\/set-?config/, (req, res) => {
   var toChange = req.body;
   var guildID = toChange.guildID;
 
-  if(!req.session.userGuilds.map(e => {return e.id}).includes(guildID)) {
+  if(!req.session.userGuilds || !req.session.userGuilds.map(e => {return e.id}).includes(guildID)) {
     return res.send("")
   }
 

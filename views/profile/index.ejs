@@ -12,124 +12,47 @@
 		<!--[if lte IE 8]><script src="../assets/js/ie/html5shiv.js"></script><![endif]-->
 		<link rel="stylesheet" href="/css/main.css" />
 		<link rel="shortcut icon" type="image/png" href="/favicon.png"/>
-		<style>
-			* {
-				box-sizing: border-box;
-			}
-
-			/* Create three equal columns that floats next to each other */
-			.column {
-				width: 30%;
-				margin: 10px;
-				padding-top: 10px;
-				padding-bottom: 10px;
-				border-radius: 10px;
-				background-color: #333435;
-			}
-
-			.column p {
-				color: white;
-				margin-bottom: 0px;
-				text-align: center;
-				line-height: 25px;
-			}
-			.column p.time {
-				font-size: 10px;
-				line-height: 15px;
-			}
-
-			.row {
-				display: flex;
-				flex-direction: row;
-				flex-wrap: wrap;
-				justify-content: center;
-			}
-			.settings-button {
-				float: right;
-			}
-			.modalDialog {
-				position: fixed;
-				top: 0;
-				right: 0;
-				bottom: 0;
-				left: 0;
-				background: rgba(0, 0, 0, 0.8);
-				z-index: 99999;
-				opacity:0;
-				-webkit-transition: opacity 400ms ease-in;
-				-moz-transition: opacity 400ms ease-in;
-				transition: opacity 400ms ease-in;
-				pointer-events: none;
-			}
-			.modalDialog:target {
-				opacity:1;
-				pointer-events: auto;
-			}
-			.modalDialog > div {
-				width: 500px;
-				position: relative;
-				margin: 10% auto;
-				padding: 5px 20px 13px 20px;
-				border-radius: 10px;
-				background: #d3d3d3	;
-			}
-			.closeWindow {
-				background: #606061;
-				color: #FFFFFF;
-				line-height: 25px;
-				position: absolute;
-				right: -12px;
-				text-align: center;
-				top: -10px;
-				width: 24px;
-				text-decoration: none;
-				font-weight: bold;
-				-webkit-border-radius: 12px;
-				-moz-border-radius: 12px;
-				border-radius: 12px;
-				-moz-box-shadow: 1px 1px 3px #000;
-				-webkit-box-shadow: 1px 1px 3px #000;
-				box-shadow: 1px 1px 3px #000;
-			}
-			.closeWindow:hover {
-				background: #00d9ff;
-			}
-		
-		</style>
 		<!--[if lte IE 8]><link rel="stylesheet" href="/css/ie8.css" /><![endif]-->
 		<!--[if lte IE 9]><link rel="stylesheet" href="/css/ie9.css" /><![endif]-->
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 		<style>
-			.row {
+			.flex-row {
 				display: flex;
 				flex-direction: row;
 				flex-wrap: wrap;
 				justify-content: center;
 			}
 
-			.column {
+			.flex-column {
+				display: flex;
+				flex-direction: column;
+				flex-wrap: wrap;
+				justify-content: space-evenly;
+			}
+
+			.display-box {
 				width: 380px;
 				margin: 10px;
 				padding-top: 10px;
 				padding-bottom: 10px;
 				border-radius: 10px;
 				background-color: #333435;
-				text-align: center;
 				color: white;
 				display: flex;
 				align-items: center;
 				justify-content: flex-start;
 			}
 
-			.column p {
+			.display-box p {
 				margin-bottom: 0px;
+				color: white;
+				text-align: center;
+				line-height: 25px;
 			}
 
 			.box-icon {
 				border-radius: 50%;
-				width: 100px;
-				height: 100px;
 				color: white;
 				border: 5px solid
 			}
@@ -154,21 +77,68 @@
 						</header>
 						<section class="wrapper style5" style="padding-top: 3em;">
 							<div class="inner">
-							<section style="position: relative">
-								<h2>Random public profiles:</h2>
-								<div class="row">
-									<% for(i = 0; i < randomUsers.length; i++) { %>
-										<div class="column">
-											<div class="box-icon">
-												<a href="/profile/<%=randomUsers[i].id%>" class="no-stripe"><img src="<%= `https://cdn.discordapp.com/avatars/${randomUsers[i].id}/${randomUsers[i].avatar}.png` %>" style="width: 90px; border-radius: 50%"></a>
-											</div>
-											<div style="margin-left: 10px">
-												<a href="/profile/<%=randomUsers[i].id%>"><p style="font-size: 28px;"><%=randomUsers[i].username%><span style="font-size: 17px;">#<%=randomUsers[i].discriminator%></span></p></a>
-											</div>
-										</div>
-									<% } %>
+							<% if(userInfo) { %>
+								<p>Welcome back to the profile page <%= userInfo.username %>! Click <a href="/profile/<%=userInfo.id%>">here</a> to visit/manage your own profile!
+							<% } %>
+								<div class="row" style="display: flex; justify-content: space-evenly;">
+									<div class="col-6 flex-column">
+										<h2>Hot games this week:</h2>
+									</div>
+									<div class="col-6 flex-column">
+										<h2>Today's hot games:</h2>
+									</div>
+									<div class="col-6 flex-column">
+										<h2>Random profiles</h2>
+									</div>
 								</div>
-							</section>
+								<div class="row" style="display: flex; justify-content: space-evenly; align-items: flex-start">
+									<div class="col-6 flex-column">
+										<% for(i = 0; i < topGamesWeek.length; i++) { %>
+											<div class="display-box">
+												<div style="margin: 0px 20px;">
+													<img src="<%= topGamesWeek[i].iconURL %>" style="width: 50px;">
+												</div>
+												<div>
+													<p style="font-size: 20px; text-align: left"><span style="color: #adadad"><%= i + 1 %>.</span> <%=topGamesWeek[i].game%><br>
+													<span style="font-size: 17px;">- players: <%=topGamesWeek[i].players%><br>
+													- hours: <%=topGamesWeek[i].hours%></span></p>
+												</div>
+											</div>
+										<% } %>
+									</div>
+									<div class="col-6 flex-column">
+										<% for(i = 0; i < topGamesDay.length; i++) { %>
+											<div class="display-box">
+												<div style="margin: 0px 20px;">
+													<img src="<%= topGamesDay[i].iconURL %>" style="width: 50px;">
+												</div>
+												<div>
+													<p style="font-size: 20px; text-align: left"><span style="color: #adadad"><%= i + 1 %>.</span> <%=topGamesDay[i].game%><br>
+													<span style="font-size: 17px;">- players: <%=topGamesDay[i].players%><br>
+													- hours: <%=topGamesDay[i].hours%></span></p>
+												</div>
+											</div>
+										<% } %>
+									</div>
+									<div class="col-6 flex-column">
+										<% for(i = 0; i < randomUsers.length; i++) { %>
+											<div class="display-box">
+												<div class="box-icon" style="margin: 0px 20px; width: 80px; height: 80px">
+													<a href="/profile/<%=randomUsers[i].id%>" class="no-stripe">
+													<% if(randomUsers[i].avatar) { %>
+														<img src="<%= `https://cdn.discordapp.com/avatars/${randomUsers[i].id}/${randomUsers[i].avatar}.png` %>" style="width: 70px; height: 70px; border-radius: 50%;">
+													<% } else {  %>
+														<img src="https://is2-ssl.mzstatic.com/image/thumb/Purple122/v4/05/9c/af/059caf3b-115a-1fca-1419-89ec1463d0ab/source/1200x630bb.jpg" style="width: 70px; height: 70px; border-radius: 50%;">
+													<% } %>
+													</a>
+												</div>
+												<div>
+													<a href="/profile/<%=randomUsers[i].id%>"><p style="font-size: 28px;"><%=randomUsers[i].username%><span style="font-size: 17px;">#<%=randomUsers[i].discriminator%></span></p></a>
+												</div>
+											</div>
+										<% } %>
+									</div>
+								</div>
 							</div>
 						</section>
 					</article>

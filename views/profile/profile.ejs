@@ -30,6 +30,7 @@
 				display: flex;
 				align-items: center;
 				justify-content: flex-start;
+				padding-left: 20px;
 			}
 
 			.column p {
@@ -113,6 +114,62 @@
 				line-height: 100%;
 				margin-top: -10px;
 			}
+
+			/* Slider */
+			.switch {
+				position: relative;
+				display: inline-block;
+				width: 60px;
+				height: 34px;
+				margin: 0px;
+			}
+	
+			.switch input {display:none;}
+	
+			.slider {
+				position: absolute;
+				cursor: pointer;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: #ccc;
+				-webkit-transition: .4s;
+				transition: .4s;
+			}
+	
+			.slider:before {
+				position: absolute;
+				content: "";
+				height: 26px;
+				width: 26px;
+				left: 4px;
+				bottom: 4px;
+				background-color: white;
+				-webkit-transition: .4s;
+				transition: .4s;
+			}
+	
+			input:checked + .slider {
+				background-color: #2196F3;
+			}
+	
+			input:focus + .slider {
+				box-shadow: 0 0 1px #2196F3;
+			}
+	
+			input:checked + .slider:before {
+				-webkit-transform: translateX(26px);
+				-ms-transform: translateX(26px);
+				transform: translateX(26px);
+			}
+			.slider.round {
+				border-radius: 34px;
+			}
+	
+			.slider.round:before {
+				border-radius: 50%;
+			}
 		
 		</style>
 		<!--[if lte IE 8]><link rel="stylesheet" href="/css/ie8.css" /><![endif]-->
@@ -132,7 +189,12 @@
 				<% for(var i=0; i < topGames.length; i++) { %>
 						{game: "<%= topGames[i].game %>", time: "<%= topGames[i].time %>", iconURL: "<%= topGames[i].iconURL %>"},
 				<% }%>
-		];
+			];
+			var topDays = [
+				<% for(var i=0; i < topDays.length; i++) { %>
+						{day: "<%= topDays[i].day %>", time: "<%= topDays[i].time %>"},
+				<% }%>
+			];
 		</script>
 	</head>
 	<body>
@@ -154,21 +216,84 @@
 						<section class="wrapper style5" style="padding-top: 3em;">
 							<div class="inner">
 							<section style="position: relative">
-								<form action="">
-									Since:<br>
-									<input type="date" name="since" style="color: black" onchange="this.form.submit()">
+								<% if(userInfo && userInfo.id == user.id) { %>
+									<p>Welcome back to your profile, <%= userInfo.username %>!</p>
+								<% } %>
+									<div style="display: flex; align-items: flex-start; margin-bottom: 10px;">
+										<% if(userInfo && userInfo.id == user.id) { %>
+										<div style="margin-right: 30px;">
+											<div style="margin-bottom: 10px;">
+												<p style="margin-bottom: 0px"><strong>Profile visibility:</strong></p>
+											</div>
+											<div style="display: flex; align-items: center;">
+												Private&nbsp;<i class="fa fa-lock" id="loadingSpinner"></i>&nbsp;
+												<label class="switch">
+													<input id="enablePreview" type="checkbox" onchange="setPrivacy(this.checked)" checked>
+													<span class="slider round"></span>
+												</label>
+												&nbsp;<i class="fa fa-globe" id="loadingSpinner"></i>&nbsp;Public
+											</div>
+										</div>
+										<% } %>
+										<div style="margin-right: 30px">
+										<p style="margin-bottom: 0px"><strong>Select filter:</strong></p>
+											<form action="">
+												<select name="select" onchange="this.form.submit()" id="selectFilter">
+													<option value="everything">Include everything</option>
+													<option value="noSoftware">Exclude approved software</option>
+													<option value="noGames">Exclude approved games</option>
+													<option value="gamesOnly">Only include approved games</option>
+													<option value="softwareOnly">Only include approved software</option>
+												</select>
+											</form>
+										</div>
+										<div style="margin-right: 30px">
+										<p style="margin-bottom: 0px"><strong>Since filter:</strong></p>
+											<form action="">
+												<input type="date" name="since" style="color: black" onchange="this.form.submit()">
+												<script>
+													var today = new Date().toISOString().split('T')[0];
+													var input = document.getElementsByName("since")[0];
+													input.setAttribute('max', today);
+													input.value = since;
+													$("#selectFilter > option").each(function() {
+														if(this.value == "<%= selectFilter %>") {
+															this.defaultSelected = true;
+														}
+													})
+												</script>
+											</form>
+										</div>
+										
+										
+										
+									</div>
 									<script>
-										var today = new Date().toISOString().split('T')[0];
-										var input = document.getElementsByName("since")[0];
-										input.setAttribute('max', today);
-										input.value = since;
+										<% if(private) { %>
+											$("#enablePreview").prop("checked", false);
+										<% } %>
+										function setPrivacy(val) {
+											var private = true;
+											if(val) private = false;
+											$.ajax({
+												url : "/set-privacy",
+												type: "POST",
+												data: $.param({private: private})
+											});
+										}
 									</script>
-								</form>
+									
+								
+								
 								<!-- Displaying the user info/playtime data -->
 								<div class="row">
 									<div class="column">
 										<div class="box-icon">
-											<img src="<%= `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` %>" style="width: 90px; border-radius: 50%">
+											<% if(user.avatar) { %>
+												<img src="<%= `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` %>" style="width: 90px; border-radius: 50%">
+											<% } else {  %>
+												<img src="https://is2-ssl.mzstatic.com/image/thumb/Purple122/v4/05/9c/af/059caf3b-115a-1fca-1419-89ec1463d0ab/source/1200x630bb.jpg" style="width: 90px; border-radius: 50%">
+											<% } %>
 										</div>
 										<div style="margin-left: 10px">
 											<p style="font-size: 28px;"><%=user.username%><span style="font-size: 17px;">#<%=user.discriminator%></span></p>
@@ -269,78 +394,70 @@
 
 										chart.draw(data, options);
 									}
-									
-
 								</script>
 								<div id="piechart" style="width: 100%"></div>
-							<table id="topGamesTable" class="display" >  
-									<thead> 
-									<tr>
-										<th>Place</th>  
-										<th>Game</th>  
-										<th>Time played</th>
-									</tr>
-									</thead>
-									<tbody>
-									</tbody>
-							</table>
-
-							<h2 style="margin-bottom: 0px;">Your most gamingful days</h2>
-							<div id="gamingfulDays">
-								<i>Based on your gaming behavior of the last 4 weeks</i>
-								<table id="topDaysTable" class="display" >  
+								<table id="topGamesTable" class="display" >  
 										<thead> 
 										<tr>
-											<th>Place</th>
-											<th>Day</th>
-											<th>Average gaming time per day</th>
+											<th>Place</th>  
+											<th>Game</th>  
+											<th>Time played</th>
 										</tr>
 										</thead>
 										<tbody>
-											
 										</tbody>
 								</table>
-							</div>
-							
-							<script>
-								function removeSince() {
-									window.location = window.location.href.split('?')[0];
-								}
-								$(document).ready(function(){
-									var table = $("#topGamesTable").find('tbody')
-									topGames.forEach(function(obj, i) {
-										i = i + 1;
-										table.append( "<tr>\n<td>" + i + "</td>\n<td>" + obj.game + "</td>\n<td>" + time(obj.time) + "</td>\n\n</tr>\n");
-									})
-									$('#topGamesTable').DataTable( {
-										bLengthChange: false,
-										bInfo: false,
-										searching: false
-									});
-									/* if(!since) {
-										var table = $("#topDaysTable").find('tbody')
-										topDays.forEach(function(obj, i) {
+
+								<h2 style="margin-bottom: 0px;">Most gamingful days</h2>
+								<div id="gamingfulDays">
+									<i>Based on <%= user.username %>'s gaming behavior of the last 4 weeks</i>
+									<table id="topDaysTable" class="display" >  
+											<thead> 
+											<tr>
+												<th>Place</th>
+												<th>Day</th>
+												<th>Average gaming time per day</th>
+											</tr>
+											</thead>
+											<tbody>
+												
+											</tbody>
+									</table>
+								</div>
+								<script>
+									function removeSince() {
+										window.location = window.location.href.split('?')[0];
+									}
+									$(document).ready(function(){
+										var table = $("#topGamesTable").find('tbody')
+										topGames.forEach(function(obj, i) {
 											i = i + 1;
-											table.append( "<tr>\n<td>" + i + "</td>\n<td>" + obj.day + "</td>\n<td>" + time(obj.time) + "</td>\n</tr>\n");
+											table.append( "<tr>\n<td>" + i + "</td>\n<td>" + obj.game + "</td>\n<td>" + time(obj.time) + "</td>\n\n</tr>\n");
 										})
-										$('#topDaysTable').DataTable({
+										$('#topGamesTable').DataTable( {
 											bLengthChange: false,
 											bInfo: false,
-											searching: false,
-											paging: false
+											bSort: false,
+											searching: false
 										});
-									} else {
-										$("#gamingfulDays").html("<p>Only available <a onclick='return removeSince()'>without since date</a> specified</p>");
-									} */
-									
-								});
-							</script>
-								
-								<%# <?php
-									if(isset($userInfo) && isset($userID) && $userInfo->id == $userID) {
-										echo "<p>Click <a href='/php/download-raw.php?id=" . $userInfo->id . "'>here</a> to download your RAW playtime data</p>";
-									}
-								?> %>
+										if(!since) {
+											var table = $("#topDaysTable").find('tbody')
+											topDays.forEach(function(obj, i) {
+												i = i + 1;
+												table.append( "<tr>\n<td>" + i + "</td>\n<td>" + obj.day + "</td>\n<td>" + time(obj.time) + "</td>\n</tr>\n");
+											})
+											$('#topDaysTable').DataTable({
+												bLengthChange: false,
+												bInfo: false,
+												bSort: false,
+												searching: false,
+												paging: false
+											});
+										} else {
+											$("#gamingfulDays").html("<p>Only available <a onclick='return removeSince()'>without since date</a> specified</p>");
+										}
+									});
+								</script>
 							</section>
 							</div>
 						</section>
