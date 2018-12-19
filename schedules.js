@@ -12,6 +12,7 @@ var connection = mysql.createPool({
 function updateTopGames(since, callback) {
   console.log("Selecting all games...")
   connection.query("SELECT game FROM knownGames;", function(error, results, fields) {
+    if(!results) return;
     var gameArr = results.map(e => e.game)
     var q = "SELECT "
     var escapes = [];
