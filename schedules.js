@@ -50,7 +50,6 @@ function updateTopGames(since, callback) {
           })
           connection.query("INSERT INTO topGames (game, players, hours, iconURL, since) VALUES ?", [arr], function(error, results, fields) {
             if(callback) callback();
-            console.log("Top games updated!")
           })
         })
       })
@@ -61,7 +60,8 @@ function updateTopGames(since, callback) {
 function updateGames() {
   updateTopGames(7, function() {
     updateTopGames(30, function() {
-      setTimeout(updateGames, 600000)
+      console.log("Top games updated!")
+      // setTimeout(updateGames, 600000)
     })
   })
 }
