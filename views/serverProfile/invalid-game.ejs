@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<!--
+	Spectral by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>TimePlayed - Test Page</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="/css/main.css" />
+		<link rel="shortcut icon" type="image/png" href="/favicon.png"/>
+		<!--[if lte IE 8]><link rel="stylesheet" href="/css/ie8.css" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="/css/ie9.css" /><![endif]-->
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+		<script src="/js/jquery.min.js"></script>
+		<script src="/js/jquery.scrollex.min.js"></script>
+		<script src="/js/jquery.scrolly.min.js"></script>
+
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+		<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+
+		<link href="/css/selectize.css" rel="stylesheet" />
+		<script src="/js/selectize.min.js"></script>
+		<script>
+			var since = "<%= since || undefined %>";
+			var games = [
+				<% games.forEach(function(game) { %>
+					"<%- game %>",
+				<% }) %>
+			];
+		</script>
+	</head>
+	<body>
+
+		<!-- Page Wrapper -->
+			<div id="page-wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1><a href="/">TimePlayed</a></h1>
+						<% include ../partials/nav %>
+					</header>
+
+				<!-- Main -->
+					<article id="main">
+						<header>
+							<h2>Invalid game!</h2>
+						</header>
+						<section class="wrapper style5" style="padding-top: 3em;">
+							<div class="inner">
+							<section style="position: relative">
+								<p style="margin-bottom: 10px">That game was never played in this server! Please try to select another game beneath or report this bug if it keeps occurring.</p>
+								<%# GAME SELECTION %>
+								<div>
+									<p style="margin-bottom: 10px"><strong>Select game:</strong></p>
+									<form action="">
+										<select name="game" id="gameSelect">
+										</select>
+										<input type="hidden" name="since" style="color: black">
+										<input type="submit" value="Apply">
+									</form>
+								</div>
+								<script>
+									var inputs = document.getElementsByName("since");
+									inputs.forEach(function(input) {
+										input.value = since;
+									})
+
+									games.forEach(function(game) {
+										$("#gameSelect").append(new Option(game, game))
+									})
+									$('#gameSelect').selectize({
+										sortField: 'text'
+									});
+								</script>
+							</section>
+							</div>
+						</section>
+					</article>
+
+				<!-- Footer -->
+				<footer id="footer">
+					<ul class="icons">
+						<li><a href="https://discordbots.org/bot/433625399398891541?" target="_blank" class="no-stripe"><img src="/images/discordbots.png" style="width:30px"></a></li>
+						<li><a href="http://support.timeplayed.xyz" target="_blank" class="no-stripe"><img src="/images/discord.png" style="width:30px"></a></li>
+						<li><a href="https://www.patreon.com/TimePlayed" target="_blank" class="no-stripe"><img src="/images/patreon.png" style="width:30px"></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; Valentijn van Winden</li><li>Design: <a href="http://html5up.net" target="_blank">HTML5 UP</a></li>
+					</ul>
+				</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			
+			<script src="/js/skel.min.js"></script>
+			<script src="/js/util.js"></script>
+			<!--[if lte IE 8]><script src="/js/ie/respond.min.js"></script><![endif]-->
+			<script src="/js/main.js"></script>
+			
+	</body>
+</html>

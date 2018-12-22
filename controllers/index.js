@@ -31,6 +31,7 @@ router.get(/^\/getting-started(\.[^.]+)?$/, function(req, res) {
 
 
 router.use('/dashboard', require("./dashboard"))
-router.use('/profile', require("./profile"))
+router.use('/profile', require("./userProfile"))
+router.use('/server', require("./serverProfile"))
 
 module.exports = router

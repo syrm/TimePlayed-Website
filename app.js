@@ -3,7 +3,6 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 const app = express()
 const port = 80
-var Profile = require('./models/profile')
 var schedules = require('./schedules');
 
 app.set('view engine', 'ejs');

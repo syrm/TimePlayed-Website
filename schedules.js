@@ -26,7 +26,7 @@ function updateTopGames(since, callback) {
     })
     console.log("Calculating playtime...")
     connection.query(q, escapes, function(error, results, fields) {
-      if(error) throw error;
+      if(!results) return callback();
       var topGames = [];
       for (var game in results[0]) {
         if(game.endsWith("_count")) {
@@ -65,4 +65,4 @@ function updateGames() {
     })
   })
 }
-updateGames();
+// updateGames();

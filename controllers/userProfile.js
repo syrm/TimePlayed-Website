@@ -1,15 +1,15 @@
 var express = require('express')
   , router = express.Router()
-  , Profile = require('../models/profile')
+  , Playtime = require('../models/playtime')
   , Discord = require('../models/discord')
 
 
 router.get("/", function(req, res) {
-  Profile.random(6, function(randoms) {
+  Playtime.random(6, function(randoms) {
     Discord.bulkUserInfo(randoms, function(randomUsers) {
-      Profile.topGamesDb(7, function(topGamesWeek) {
-        Profile.topGamesDb(30, function(topGamesMonth) {
-          res.render("profile", {
+      Playtime.topGamesDb(7, function(topGamesWeek) {
+        Playtime.topGamesDb(30, function(topGamesMonth) {
+          res.render("userProfile", {
             userInfo: req.session.userInfo,
             randomUsers: randomUsers,
             topGamesWeek: topGamesWeek,
@@ -26,20 +26,20 @@ router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
   var sessionUser = req.session.userInfo;
   Discord.botRequest(`users/${id}`, function(user) {
     if(user.code) {
-      res.render("profile/not-found", {id: id, userInfo: sessionUser})
+      res.render("userProfile/not-found", {id: id, userInfo: sessionUser})
     } else {
-      Profile.checkPrivate(id, function(private) {
+      Playtime.checkPrivate(id, function(private) {
         if(private && (!sessionUser || id != sessionUser.id)) {
-          res.render("profile/private", {user: user, userInfo: sessionUser})
+          res.render("userProfile/private", {user: user, userInfo: sessionUser})
         } else {
-          Profile.topGames(id, req.query.since, req.query.select, function(topGames) {
+          Playtime.topGames(id, req.query.since, req.query.select, function(topGames) {
             var totalHours = 0;
             topGames.forEach(obj => {
               totalHours += obj.time / 3600;
             })
             totalHours = Math.round(totalHours);
-            Profile.topDays(id, function(topDays) {
-              res.render("profile/profile", {
+            Playtime.topDays(id, function(topDays) {
+              res.render("userProfile/profile", {
                 user: user,
                 since: req.query.since,
                 topGames: topGames,

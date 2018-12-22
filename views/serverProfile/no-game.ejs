@@ -1,0 +1,364 @@
+<!DOCTYPE HTML>
+<!--
+	Spectral by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>TimePlayed - Server Profile</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="/css/main.css" />
+		<link rel="shortcut icon" type="image/png" href="/favicon.png"/>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+
+			/* Create three equal columns that floats next to each other */
+			.column {
+				width: 380px;
+				margin: 10px;
+				padding-top: 10px;
+				padding-bottom: 10px;
+				border-radius: 10px;
+				background-color: #333435;
+				text-align: center;
+				color: white;
+				display: flex;
+				align-items: center;
+				justify-content: flex-start;
+				padding-left: 20px;
+			}
+
+			.column p {
+				margin-bottom: 0px;
+			}
+
+			.column p.time {
+				font-size: 10px;
+				line-height: 15px;
+			}
+			
+		
+		</style>
+		<!--[if lte IE 8]><link rel="stylesheet" href="/css/ie8.css" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="/css/ie9.css" /><![endif]-->
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+		<script src="/js/jquery.min.js"></script>
+		<script src="/js/jquery.scrollex.min.js"></script>
+		<script src="/js/jquery.scrolly.min.js"></script>
+
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+		<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+
+		<script src="/js/selectize.min.js"></script>
+		<link href="/css/selectize.css" rel="stylesheet" />
+
+		<script>
+			var since = "<%= since || undefined %>";
+			var topGames = [
+				<% for(var i=0; i < topGames.length; i++) { %>
+						{game: "<%- topGames[i].game %>", time: "<%- topGames[i].time %>", count:"<%- topGames[i].count %>",  iconURL: "<%- topGames[i].iconURL %>"},
+				<% }%>
+			];
+			var games = [
+				<% games.forEach(function(game) { %>
+					"<%- game %>",
+				<% }) %>
+			];
+		</script>
+	</head>
+	<body style="color: black">
+
+		<!-- Page Wrapper -->
+			<div id="page-wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1><a href="/">TimePlayed</a></h1>
+						<% include ../partials/nav %>
+					</header>
+
+				<!-- Main -->
+					<article id="main">
+						<header>
+							<h2><%= guild.name %></h2>
+						</header>
+						<section class="wrapper style5" style="padding-top: 3em;">
+							<div class="inner">
+							<section style="position: relative">
+								<%# FILTER SETTINGS %>
+								<form action="" style="display: flex; align-items: flex-start;">
+									<div style="margin-right: 30px">
+										<p style="margin-bottom: 0px"><strong>Select filter:</strong></p>
+										<select name="select" onchange="this.form.submit()" id="selectFilter">
+											<option value="everything">Include everything</option>
+											<option value="noSoftware">Exclude approved software</option>
+											<option value="noGames">Exclude approved games</option>
+											<option value="gamesOnly">Only include approved games</option>
+											<option value="softwareOnly">Only include approved software</option>
+										</select>
+									</div>
+									<div style="margin-right: 30px">
+										<p style="margin-bottom: 0px"><strong>Minimal users for game to count:</strong></p>
+										<input name="minUsers" style="color: black" type="number" min="0" max="99" value="<%= minUsers || 0 %>">
+										<input type="submit" value="apply">
+										<%# <button id="numSubmit" onclick="this.form.submit()">Apply</button> %>
+									</div>
+									<div style="margin-right: 30px">
+										<p style="margin-bottom: 0px"><strong>Since filter:</strong></p>
+										<input type="date" name="since" style="color: black" onchange="this.form.submit()">
+									</div>
+								</form>
+
+								<%# GAME SELECTION %>
+								<div style="margin-bottom: 20px">
+									<p style="margin-bottom: 10px"><strong>Select game:</strong></p>
+									<form action="">
+										<select name="game" id="gameSelect">
+										</select>
+										<input type="hidden" name="since" style="color: black">
+										<input type="submit" value="Apply">
+									</form>
+								</div>
+								<script>
+									var today = new Date().toISOString().split('T')[0];
+									var inputs = document.getElementsByName("since");
+									inputs.forEach(function(input) {
+										input.setAttribute('max', today);
+										input.value = since;
+									})
+									$("#selectFilter > option").each(function() {
+										if(this.value == "<%= selectFilter %>") {
+											this.defaultSelected = true;
+										}
+									})
+
+									games.forEach(function(game) {
+										$("#gameSelect").append(new Option(game, game))
+									})
+									$('#gameSelect').selectize({
+										sortField: 'text'
+									});
+								</script>
+
+								<%# SERVER INFO %>
+								<div class="row">
+									<div class="column">
+										<div>
+											<% if(guild.icon) { %>
+												<img src="<%= `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` %>" style="width: 90px; border-radius: 50%">
+											<% } else {  %>
+												<img src="https://is2-ssl.mzstatic.com/image/thumb/Purple122/v4/05/9c/af/059caf3b-115a-1fca-1419-89ec1463d0ab/source/1200x630bb.jpg" style="width: 90px; border-radius: 50%">
+											<% } %>
+										</div>
+										<div style="margin-left: 10px">
+											<p style="font-size: 20px;"><%=guild.name%></p>
+										</div>
+										
+									</div>
+									<div class="column">
+										<div class="box-icon" style="background: linear-gradient(60deg, red,blue);">
+											<i class="icon fa-gamepad" style="font-size: 70px; line-height: 83px;"></i>
+										</div>
+										<div style="flex: 1">
+											<p style="font-size: 15px;">Total games played:</p>
+											<p class="large-stand-out"><script>document.write(topGames.length)</script></p>
+										</div>
+										
+									</div>
+									<div class="column">
+										<div class="box-icon" style="background: linear-gradient(10deg, green,blue);">
+											<i class="icon fa-clock-o" style="font-size: 70px; line-height: 86px;"></i>
+										</div>
+										<div style="flex: 1">
+											<p style="font-size: 15px; margin-top: 0px;">Total hours played:</p>
+											<p class="large-stand-out"><%= totalHours %></p>
+										</div>
+									</div>
+								</div>
+
+								<%# TOP 3 GAME BOXES VISUALIZATION %>
+								<h2>Top 3 server games:</h2>
+								<div class="row">
+									<script>
+										function time(num) {
+											if(num < 0) return n;
+											if(num == 0) return "no"
+
+											var hours = Math.floor(num / 3600);
+											var minutes = Math.floor(num % 3600 / 60);
+											var seconds = Math.floor(num % 3600 % 60);
+											
+											var h = ""
+											if(hours == 1) h = "1 hour"
+											if(hours > 1) h = `${hours} hours`
+											var m = ""
+											if(minutes == 1) m = "1 minute"
+											if(minutes > 1) m = `${minutes} minutes`
+											var s = ""
+											if(seconds == 1) s = "1 second"
+											if(seconds > 1) s = `${seconds} seconds`
+											var and = ""
+											if(seconds > 0) {
+												if(minutes > 0 || hours > 0) and = " and "
+											}
+											var comma = ""
+											if(hours > 0) comma = ", "
+											if(seconds < 1 && hours > 0) comma = " and "
+											
+											return h + comma +  m + and + s
+										}
+										function format(i) {
+											var str = '<div class="column">\n'
+											// Icon
+											if(topGames[i].iconURL) str += '<div><img src=\'' + topGames[i].iconURL + '\' style="width: 50px;" align="left" vertical-align="middle"></div>\n'
+											// Game name / time
+											str += '<div style="flex: 1"><p class="game">' + topGames[i].game + '</p>\n<p class="time">' + time(topGames[i].time) + '</p></div>'
+
+											str += '</div>'
+
+											document.write(str)
+										}
+										format(0)
+										format(1)
+										format(2)
+									</script>
+								</div>
+
+								<%# TOP GAMES CHARTS %>
+								<h2 style="margin: 0px">Top games charts:</h2>
+								<p style="margin: 0px">Limited at 6 games</p>
+								<div class="row">
+									<div class="col-6">
+										<%# PIECHART 1 (based on playtime) %>
+										<div id="piechart" style="width: 100%"></div>
+										<script type="text/javascript">
+											// Load google charts
+											google.charts.load('current', {'packages':['corechart']});
+											google.charts.setOnLoadCallback(drawChart);
+											function drawChart() {
+												var data = [["Game", "Players"]];
+												var count = 0;
+												topGames.forEach(function(obj) {
+													if(count < 6) {
+														data.push([obj.game, Math.round(obj.time / 3600)])
+													}
+													count++;
+												})
+												data = google.visualization.arrayToDataTable(data);
+												var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+												var options = {
+													'title':'Based on playtime',
+													'height':500,
+													'width':500,
+													'is3D': true
+												};
+
+												var formatter = new google.visualization.NumberFormat(
+													{suffix: ' hours', fractionDigits: 0});
+												formatter.format(data, 1);
+
+												chart.draw(data, options);
+											}
+										</script>
+									</div>
+
+									<div class="col-6">
+										<%# PIECHART 2 (based on player count) %>
+										<script type="text/javascript">
+										// Load google charts
+										google.charts.load('current', {'packages':['corechart']});
+										google.charts.setOnLoadCallback(drawChart);
+										function drawChart() {
+											var data = [["Game", "Hours"]];
+											var count = 0;
+											sortedByCount = topGames.sort(function(a, b) {return b.count - a.count})
+											sortedByCount.forEach(function(obj) {
+												if(count < 6) {
+													data.push([obj.game, Number(obj.count)])
+												}
+												count++;
+											})
+											data = google.visualization.arrayToDataTable(data);
+											var chart = new google.visualization.PieChart(document.getElementById('piechart-2'));
+											var options = {
+												'title':'Based on player count',
+												'height':500,
+												'width':500,
+												'is3D': true
+											};
+
+											var formatter = new google.visualization.NumberFormat(
+												{suffix: ' players', fractionDigits: 0});
+											formatter.format(data, 1);
+
+											chart.draw(data, options);
+										}
+										</script>
+										<div id="piechart-2" style="width: 100%"></div>
+									</div>
+								</div>
+
+								<%# TOP GAMES TABLE %>
+								<h2>Top games table:</h2>
+								<table id="topGamesTable" class="display" >  
+									<thead> 
+										<tr>
+											<th>Place</th>  
+											<th>Game</th>  
+											<th>Time played</th>
+											<th>Users</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+
+								<script>
+									function removeSince() {
+										window.location = window.location.href.split('?')[0];
+									}
+									var table = $("#topGamesTable").find('tbody')
+									topGames.forEach(function(obj, i) {
+										i = i + 1;
+										table.append( "<tr><td>" + i + "</td><td>" + obj.game + "</td><td>" + time(obj.time) + "</td><td>" + obj.count + "</td></tr>");
+									})
+									$('#topGamesTable').DataTable( {
+										bLengthChange: false,
+										bInfo: false
+									});
+									$('#topGamesTable_filter > label > input').css("color", "black")
+								</script>
+							</section>
+							</div>
+						</section>
+					</article>
+
+				<!-- Footer -->
+				<footer id="footer">
+					<ul class="icons">
+						<li><a href="https://discordbots.org/bot/433625399398891541?" target="_blank" class="no-stripe"><img src="/images/discordbots.png" style="width:30px"></a></li>
+						<li><a href="http://support.timeplayed.xyz" target="_blank" class="no-stripe"><img src="/images/discord.png" style="width:30px"></a></li>
+						<li><a href="https://www.patreon.com/TimePlayed" target="_blank" class="no-stripe"><img src="/images/patreon.png" style="width:30px"></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; Valentijn van Winden</li><li>Design: <a href="http://html5up.net" target="_blank">HTML5 UP</a></li>
+					</ul>
+				</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			
+			<script src="/js/skel.min.js"></script>
+			<script src="/js/util.js"></script>
+			<!--[if lte IE 8]><script src="/js/ie/respond.min.js"></script><![endif]-->
+			<script src="/js/main.js"></script>
+			
+	</body>
+</html>
