@@ -33,6 +33,11 @@
 				<% games.forEach(function(game) { %>
 					"<%- game %>",
 				<% }) %>
+			]; 
+			var topUsers = [
+				<% topUsers.forEach(function(user) { %>
+					{userID: <%- user.userID %>, username: "<%- user.username %>", time: <%- user.time %>},
+				<% }) %>
 			];
 		</script>
 	</head>
@@ -146,6 +151,122 @@
 										</div>
 									</div>
 								</div>
+
+								<%# GAME TRENDING CHART %>
+								<h2 style="margin-top: 20px; margin-bottom: 10px;">Trending chart:</h2>
+								<% if(gameChart.length > 2) { %>
+									<%
+										function formatDate(date) {
+											var monthNames = [
+											"January", "February", "March",
+											"April", "May", "June", "July",
+											"August", "September", "October",
+											"November", "December"
+											];
+										
+											var day = date.getDate();
+											var monthIndex = date.getMonth();
+											var year = date.getFullYear();
+										
+											return day + ' ' + monthNames[monthIndex] + ' ' + year;
+										}
+									%>
+									Day 1 = <code><%- formatDate(startDate) %></code><br>
+									Day <%= gameChart.pop().day %> = <code>today</code>
+									<div id="trendingChart"></div>
+									<script>
+										google.charts.load('current', {packages: ['corechart', 'line']});
+										google.charts.setOnLoadCallback(drawBasic);
+
+										function drawBasic() {
+											var data = new google.visualization.DataTable();
+											data.addColumn('number', 'Day');
+											data.addColumn('number', 'Time');
+											data.addRows([
+												<% gameChart.forEach(function(obj) { %>
+													[<%- obj.day %>, <%- obj.time %>],
+												<% }) %>
+											])
+
+											var options = {
+												hAxis: {
+													title: 'Day'
+												},
+												vAxis: {
+													title: 'Popularity',
+													viewWindowMode: "explicit",
+													viewWindow:{ min: 0 }
+												}
+											};
+
+											var chart = new google.visualization.LineChart(document.getElementById('trendingChart'));
+
+											chart.draw(data, options);
+											}
+									</script>
+								<% } else { %>
+									<p>Not enough user data to display chart</p>
+								<% } %>
+
+								<%# TOP USERS %>
+								<h2>Top users:</h2>
+								<i>Only includes users with public profiles</i><br>
+								<i>Note: this data was retrieved from the playtime table, it may deviate from other page information</i>
+								<table id="topUsersTable" class="display" >  
+									<thead> 
+										<tr>
+											<th>Place</th>  
+											<th>User</th>  
+											<th>Time played</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+
+								<script>
+									function time(num) {
+										if(num < 0) return n;
+										if(num == 0) return "no"
+
+										var hours = Math.floor(num / 3600);
+										var minutes = Math.floor(num % 3600 / 60);
+										var seconds = Math.floor(num % 3600 % 60);
+										
+										var h = ""
+										if(hours == 1) h = "1 hour"
+										if(hours > 1) h = `${hours} hours`
+										var m = ""
+										if(minutes == 1) m = "1 minute"
+										if(minutes > 1) m = `${minutes} minutes`
+										var s = ""
+										if(seconds == 1) s = "1 second"
+										if(seconds > 1) s = `${seconds} seconds`
+										var and = ""
+										if(seconds > 0) {
+											if(minutes > 0 || hours > 0) and = " and "
+										}
+										var comma = ""
+										if(hours > 0) comma = ", "
+										if(seconds < 1 && hours > 0) comma = " and "
+										
+										return h + comma +  m + and + s
+									}
+
+									function removeSince() {
+										window.location = window.location.href.split('?')[0];
+									}
+									var table = $("#topUsersTable").find('tbody')
+									topUsers.forEach(function(obj, i) {
+										i = i + 1;
+										table.append( "<tr><td>" + i + "</td><td>" + obj.username + "</td><td>" + time(obj.time) + "</td></tr>");
+									})
+									$('#topUsersTable').DataTable( {
+										bLengthChange: false,
+										bInfo: false,
+										searching: false
+									});
+								</script>
 
 							</section>
 							</div>

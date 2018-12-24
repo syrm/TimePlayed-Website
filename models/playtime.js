@@ -11,12 +11,63 @@ var connection = mysql.createPool({
 
 var Discord = require("./discord")
 
+// Privacy
+
 exports.checkPrivate = function(userID, callback) {
   connection.query("SELECT count(*) FROM privateUsers WHERE userID=? ", [userID], function(error, results, fields) {
     var private = results[0]["count(*)"] > 0;
     return callback(private);
   })
 }
+
+exports.checkPremiumGuild = function(id, callback) {
+  connection.query("SELECT COUNT(*) AS count FROM premium WHERE guildID=?", [id, id], function(error, results, fields) {
+    callback(results[0].count > 0)
+  })
+}
+
+exports.checkServerPrivacy = function(guildID, callback) {
+  connection.query("SELECT value FROM guildPrivacy WHERE guildID=?", [guildID], function(error, results, fields) {
+    var value = 1;
+    if(results[0]) value = results[0].value
+    callback(value);
+  })
+}
+
+exports.checkServerAccess = function(value, guildID, userInfo, userGuilds, callback) {
+  if(value == 0) {
+    // Open for everyone
+    callback(true);
+  } else if(value == 1) {
+    // Only for server members
+    if(userInfo) {
+      Discord.botRequest(`guilds/${guildID}/members/${userInfo.id}`, function(result) {
+        if(result.message) {
+          callback(false);
+        } else {
+          callback(true);
+        }
+      })
+    } else {
+      callback(false);
+    }
+  } else if(value == 2) {
+    // Only for server moderators
+    if(userGuilds && userGuilds.filter(e => e.id == guildID)[0] && Discord.permList(userGuilds.filter(e => e.id == guildID)[0].permissions).includes("generalManageServer")) {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  }
+}
+
+exports.setGuildPrivacy = function(id, value, callback) {
+  connection.query("INSERT INTO guildPrivacy (guildID, value) VALUES(?, ?) ON DUPLICATE KEY UPDATE value=?", [id, value, value], function(error, results, fields) {
+    callback();
+  })
+}
+
+// Without games
 
 exports.topGames = function(id, since, selectFilter, callback) {
   var gameFilter = ""
@@ -84,11 +135,22 @@ exports.topGamesServer = function(id, minimalPlayers, selectFilter, since, callb
   })
 }
 
-exports.getServerGames = function(id, callback) {
-  connection.query("SELECT DISTINCT game FROM guildStats WHERE guildID=?", [id], function(error, results, fields) {
-    callback(results.map(e => e.game))
+exports.topDays = function(id, callback) {
+  var q = `
+  SELECT
+    DATE_FORMAT(startDate, '%W') AS day,
+    SUM(TIMESTAMPDIFF(SECOND, startDate, endDate)) / 4 AS time
+  FROM playtime
+    WHERE userID=?
+    AND startDate > NOW() - INTERVAL 4 WEEK
+  GROUP BY DATE_FORMAT(startDate, '%W')
+  ORDER BY time DESC`
+  connection.query(q, [id], function(error, results, fields) {
+    callback(results);
   })
 }
+
+// With games
 
 exports.timePlayedServer = function(id, game, since, callback) {
   var sinceFilter = ""
@@ -111,73 +173,49 @@ exports.timePlayedServer = function(id, game, since, callback) {
   })
 }
 
-exports.topDays = function(id, callback) {
+exports.topUsers = function(id, game, callback) {
   var q = `
   SELECT
-    DATE_FORMAT(startDate, '%W') AS day,
-    SUM(TIMESTAMPDIFF(SECOND, startDate, endDate)) / 4 AS time
-  FROM playtime
-    WHERE userID=?
-    AND startDate > NOW() - INTERVAL 4 WEEK
-  GROUP BY DATE_FORMAT(startDate, '%W')
+    userID,
+    SUM(TIMESTAMPDIFF(SECOND,startDate, IFNULL(endDate, NOW()))) AS time
+  FROM
+    playtime
+  WHERE
+    game=?
+    AND userID IN (SELECT DISTINCT userID FROM guildStats WHERE guildID=?)
+      AND userID IN (SELECT userID FROM termsAccept WHERE accept=1)
+      AND userID NOT IN (SELECT userID FROM privateUsers)
+  GROUP BY userID
   ORDER BY time DESC`
-  connection.query(q, [id], function(error, results, fields) {
-    callback(results);
-  })
-}
-
-exports.topGamesDb = function(sinceDays, callback) {
-  connection.query("SELECT game, players, iconURL, hours FROM topGames WHERE since=?", [sinceDays], function(error, results, fields) {
-    callback(results);
-  })
-}
-
-exports.checkPremiumGuild = function(id, callback) {
-  connection.query("SELECT COUNT(*) AS count FROM premium WHERE guildID=?", [id, id], function(error, results, fields) {
-    callback(results[0].count > 0)
-  })
-}
-
-exports.checkServerPrivacy = function(guildID, callback) {
-  connection.query("SELECT value FROM guildPrivacy WHERE guildID=?", [guildID], function(error, results, fields) {
-    var value = 1;
-    if(results[0]) value = results[0].value
-    callback(value);
-  })
-}
-
-exports.checkServerAccess = function(value, guildID, userInfo, userGuilds, callback) {
-  if(value == 0) {
-    // Open for everyone
-    callback(true);
-  } else if(value == 1) {
-    // Only for server members
-    if(userInfo) {
-      Discord.botRequest(`guilds/${guildID}/members/${userInfo.id}`, function(result) {
-        if(result.message) {
-          callback(false);
-        } else {
-          callback(true);
-        }
+  connection.query(q, [game, id], function(error, topUsers, fields) {
+    Discord.bulkUserInfo(topUsers.map(e => e.userID), function(userInfos) {
+      topUsers.forEach(user => {
+        var userInfo = userInfos.filter(e => e.id == user.userID)
+        if(userInfo[0]) user.username = userInfo[0].username
       })
-    } else {
-      callback(false);
-    }
-  } else if(value == 2) {
-    // Only for server moderators
-    if(userGuilds && userGuilds.filter(e => e.id == guildID)[0] && Discord.permList(userGuilds.filter(e => e.id == guildID)[0].permissions).includes("generalManageServer")) {
-      callback(true);
-    } else {
-      callback(false);
-    }
-  }
-}
-
-exports.setGuildPrivacy = function(id, value, callback) {
-  connection.query("INSERT INTO guildPrivacy (guildID, value) VALUES(?, ?) ON DUPLICATE KEY UPDATE value=?", [id, value, value], function(error, results, fields) {
-    callback();
+      callback(topUsers);
+    })
   })
 }
+
+exports.gameChart = function(id, game, callback) {
+  var q = `
+  SELECT
+    TIMESTAMPDIFF(DAY,(SELECT startDate FROM guildStats WHERE guildID=? AND game=? ORDER BY startDate LIMIT 1), startDate) + 1 AS day,
+    SUM(TIMESTAMPDIFF(MINUTE, startDate, IFNULL(endDate, NOW()))) AS time
+  FROM guildStats
+  WHERE
+    guildID=?
+      AND game=?
+  GROUP BY TIMESTAMPDIFF(DAY,(SELECT startDate FROM guildStats WHERE guildID=? AND game=? ORDER BY startDate LIMIT 1), startDate)`
+  connection.query(q, [id, game, id, game, id, game], function(error, results, fields) {
+    connection.query(`SELECT startDate FROM guildStats WHERE guildID=? AND game=? ORDER BY startDate LIMIT 1`, [id, game], function(error, date, fields) {
+      callback([results, date[0].startDate]);
+    })
+  })
+}
+
+// Other
 
 exports.random = function(amount, callback) {
   amountPlus = amount + 2;
@@ -188,5 +226,17 @@ exports.random = function(amount, callback) {
     })
     results.splice(amount);
     callback(results);
+  })
+}
+
+exports.topGamesDb = function(sinceDays, callback) {
+  connection.query("SELECT game, players, iconURL, hours FROM topGames WHERE since=?", [sinceDays], function(error, results, fields) {
+    callback(results);
+  })
+}
+
+exports.getServerGames = function(id, callback) {
+  connection.query("SELECT DISTINCT game FROM guildStats WHERE guildID=?", [id], function(error, results, fields) {
+    callback(results.map(e => e.game))
   })
 }

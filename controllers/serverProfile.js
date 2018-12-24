@@ -16,12 +16,12 @@ router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
   if(userGuilds && userGuilds.filter(e => e.id == id)[0] && Discord.permList(userGuilds.filter(e => e.id == id)[0].permissions).includes("generalManageServer")) {
     manageServer = true;
   }
-  Playtime.checkServerPrivacy(id, function(privacy) {
-    Playtime.checkServerAccess(privacy, id, req.session.userInfo, req.session.userGuilds, function(access) {
-      if(access) {
-        Playtime.checkPremiumGuild(id, function(premium) {
-          if(premium) {
-            // If the server is premium
+  Playtime.checkPremiumGuild(id, function(premium) {
+    if(premium) {
+      // If the server is premium
+      Playtime.checkServerPrivacy(id, function(privacy) {
+        Playtime.checkServerAccess(privacy, id, req.session.userInfo, req.session.userGuilds, function(access) {
+          if(access) {
             Discord.botRequest(`guilds/${id}`, function(guild) {
               if(guild.code) {
                 // If TimePlayed is not in the server
@@ -40,15 +40,22 @@ router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
                     } else {
                       // If there game is valid
                       Playtime.timePlayedServer(id, req.query.game, req.query.since, function(totalHours) {
-                        res.render("serverProfile/with-game", {
-                          userInfo: sessionUser,
-                          guild: guild,
-                          since: req.query.since,
-                          games: games,
-                          game: req.query.game,
-                          totalHours: totalHours[0],
-                          iconURL: totalHours[1],
-                          manageServer: manageServer
+                        Playtime.topUsers(id, req.query.game, function(topUsers) {
+                          Playtime.gameChart(id, req.query.game, function(gameChart) {
+                            res.render("serverProfile/with-game", {
+                              userInfo: sessionUser,
+                              guild: guild,
+                              since: req.query.since,
+                              games: games,
+                              game: req.query.game,
+                              totalHours: totalHours[0],
+                              iconURL: totalHours[1],
+                              manageServer: manageServer,
+                              topUsers: topUsers,
+                              gameChart: gameChart[0],
+                              startDate: gameChart[1]
+                            })
+                          })
                         })
                       })
                     }
@@ -76,21 +83,22 @@ router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
                 })
               }
             })
+          } else if(privacy == 1 || privacy == 2) {
+            res.render("serverProfile/no-access", {
+              userInfo: sessionUser,
+              privacy: privacy
+            })
           } else {
-            // If the server isn't premium
-            res.render("serverProfile/not-premium", {userInfo: sessionUser})
+            res.send("Sorry, something went wrong. Please try again later.")
           }
         })
-      } else if(privacy == 1 || privacy == 2) {
-        res.render("serverProfile/no-access", {
-          userInfo: sessionUser,
-          privacy: privacy
-        })
-      } else {
-        res.send("Sorry, something went wrong. Please try again later.")
-      }
-    })
+      })
+    } else {
+      // If the server isn't premium
+      res.render("serverProfile/not-premium", {userInfo: sessionUser})
+    }
   })
+  
   
   
 })
