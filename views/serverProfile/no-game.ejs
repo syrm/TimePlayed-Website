@@ -12,38 +12,7 @@
 		<!--[if lte IE 8]><script src="/js/ie/html5shiv.js"></script><![endif]-->
 		<link rel="stylesheet" href="/css/main.css" />
 		<link rel="shortcut icon" type="image/png" href="/favicon.png"/>
-		<style>
-			* {
-				box-sizing: border-box;
-			}
 
-			/* Create three equal columns that floats next to each other */
-			.column {
-				width: 380px;
-				margin: 10px;
-				padding-top: 10px;
-				padding-bottom: 10px;
-				border-radius: 10px;
-				background-color: #333435;
-				text-align: center;
-				color: white;
-				display: flex;
-				align-items: center;
-				justify-content: flex-start;
-				padding-left: 20px;
-			}
-
-			.column p {
-				margin-bottom: 0px;
-			}
-
-			.column p.time {
-				font-size: 10px;
-				line-height: 15px;
-			}
-			
-		
-		</style>
 		<!--[if lte IE 8]><link rel="stylesheet" href="/css/ie8.css" /><![endif]-->
 		<!--[if lte IE 9]><link rel="stylesheet" href="/css/ie9.css" /><![endif]-->
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -107,7 +76,6 @@
 										<p style="margin-bottom: 0px"><strong>Minimal users for game to count:</strong></p>
 										<input name="minUsers" style="color: black" type="number" min="0" max="99" value="<%= minUsers || 0 %>">
 										<input type="submit" value="apply">
-										<%# <button id="numSubmit" onclick="this.form.submit()">Apply</button> %>
 									</div>
 									<div style="margin-right: 30px">
 										<p style="margin-bottom: 0px"><strong>Since filter:</strong></p>
@@ -118,42 +86,57 @@
 								<%# GAME SELECTION %>
 								<div style="margin-bottom: 20px">
 									<p style="margin-bottom: 10px"><strong>Select game:</strong></p>
-									<form action="">
-										<select name="game" id="gameSelect">
+									<form id="filterForm" action="">
+										<select name="game" id="gameSelect" style="width: 80%;">
+											<option id="noGame" value="" disabled selected>-- Select game --</option>
 										</select>
 										<input type="hidden" name="since" style="color: black">
-										<input type="submit" value="Apply">
 									</form>
 								</div>
 								<script>
+
+									// Since
 									var today = new Date().toISOString().split('T')[0];
 									var inputs = document.getElementsByName("since");
 									inputs.forEach(function(input) {
 										input.setAttribute('max', today);
 										input.value = since;
 									})
+									// Select filter
 									$("#selectFilter > option").each(function() {
 										if(this.value == "<%= selectFilter %>") {
 											this.defaultSelected = true;
 										}
 									})
 
+									// Game filter
 									games.forEach(function(game) {
 										$("#gameSelect").append(new Option(game, game))
 									})
-									$('#gameSelect').selectize({
+
+									var select = $('#gameSelect').selectize({
 										sortField: 'text'
 									});
+									var selectize = select[0].selectize
+
+									selectize.on('change', function(value) {
+										if(value == "") return;
+										$("#filterForm").submit()
+									})
 								</script>
 
+								<% if(manageServer) { %>
+									<% include ../partials/server-privacy %>
+								<% } %>
+
 								<%# SERVER INFO %>
-								<div class="row">
-									<div class="column">
+								<div class="flex-row">
+									<div class="column gray-box">
 										<div>
 											<% if(guild.icon) { %>
-												<img src="<%= `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` %>" style="width: 90px; border-radius: 50%">
+												<img class="box-icon no-border" src="<%= `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` %>">
 											<% } else {  %>
-												<img src="https://is2-ssl.mzstatic.com/image/thumb/Purple122/v4/05/9c/af/059caf3b-115a-1fca-1419-89ec1463d0ab/source/1200x630bb.jpg" style="width: 90px; border-radius: 50%">
+												<img class="box-icon no-border" src="https://is2-ssl.mzstatic.com/image/thumb/Purple122/v4/05/9c/af/059caf3b-115a-1fca-1419-89ec1463d0ab/source/1200x630bb.jpg">
 											<% } %>
 										</div>
 										<div style="margin-left: 10px">
@@ -161,9 +144,9 @@
 										</div>
 										
 									</div>
-									<div class="column">
+									<div class="column gray-box">
 										<div class="box-icon" style="background: linear-gradient(60deg, red,blue);">
-											<i class="icon fa-gamepad" style="font-size: 70px; line-height: 83px;"></i>
+											<i class="icon fa-gamepad" style="font-size: 60px; line-height: 60px;"></i>
 										</div>
 										<div style="flex: 1">
 											<p style="font-size: 15px;">Total games played:</p>
@@ -171,9 +154,9 @@
 										</div>
 										
 									</div>
-									<div class="column">
+									<div class="column gray-box">
 										<div class="box-icon" style="background: linear-gradient(10deg, green,blue);">
-											<i class="icon fa-clock-o" style="font-size: 70px; line-height: 86px;"></i>
+											<i class="icon fa-clock-o" style="font-size: 60px; line-height: 68px;"></i>
 										</div>
 										<div style="flex: 1">
 											<p style="font-size: 15px; margin-top: 0px;">Total hours played:</p>
@@ -184,7 +167,7 @@
 
 								<%# TOP 3 GAME BOXES VISUALIZATION %>
 								<h2>Top 3 server games:</h2>
-								<div class="row">
+								<div class="flex-row">
 									<script>
 										function time(num) {
 											if(num < 0) return n;
@@ -214,11 +197,11 @@
 											return h + comma +  m + and + s
 										}
 										function format(i) {
-											var str = '<div class="column">\n'
+											var str = '<div class="column gray-box">\n'
 											// Icon
 											if(topGames[i].iconURL) str += '<div><img src=\'' + topGames[i].iconURL + '\' style="width: 50px;" align="left" vertical-align="middle"></div>\n'
 											// Game name / time
-											str += '<div style="flex: 1"><p class="game">' + topGames[i].game + '</p>\n<p class="time">' + time(topGames[i].time) + '</p></div>'
+											str += '<div style="flex: 1"><p class="game">' + topGames[i].game + '<br><span style="font-size: 10px;">' + time(topGames[i].time) + '</span></p></div>'
 
 											str += '</div>'
 

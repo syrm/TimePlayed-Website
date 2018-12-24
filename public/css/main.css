@@ -20,8 +20,11 @@
 		border-radius: 10px;
 		background-color: #333435;
 	}
+	.column p {
+		margin-bottom: 0px;
+	}
 
-	.row {
+	.flex-row {
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
@@ -39,10 +42,27 @@
 	}
 	.box-icon {
 		border-radius: 50%;
-		width: 100px;
-		height: 100px;
+		width: 80px;
+		height: 80px;
 		color: white;
 		border: 5px solid
+	}
+
+	.no-border {
+		border: none;
+	}
+
+	.gray-box {
+		width: 380px;
+		margin: 10px;
+		padding: 10px 20px;
+		border-radius: 10px;
+		background-color: #333435;
+		text-align: center;
+		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
 	}
 
 	/* Slider */
@@ -3328,7 +3348,6 @@
 			position: absolute;
 			right: 0;
 			top: 0;
-			vertical-align: middle;
 			width: 7em;
 		}
 

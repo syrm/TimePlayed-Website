@@ -22,17 +22,6 @@
 
 		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
 		<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
-
-		<link href="/css/selectize.css" rel="stylesheet" />
-		<script src="/js/selectize.min.js"></script>
-		<script>
-			var since = "<%= since || undefined %>";
-			var games = [
-				<% games.forEach(function(game) { %>
-					"<%- game %>",
-				<% }) %>
-			];
-		</script>
 	</head>
 	<body>
 
@@ -48,33 +37,30 @@
 				<!-- Main -->
 					<article id="main">
 						<header>
-							<h2>Invalid game!</h2>
+							<h2>No access!</h2>
 						</header>
 						<section class="wrapper style5" style="padding-top: 3em;">
 							<div class="inner">
 							<section style="position: relative">
-								<p style="margin-bottom: 10px">That game was never played in this server! Please try to select another game beneath or report this bug if it keeps occurring.</p>
-								<div>
-									<p style="margin-bottom: 10px"><strong>Select game:</strong></p>
-									<form action="">
-										<select name="game" id="gameSelect">
-										</select>
-										<input type="hidden" name="since" style="color: black">
-										<input type="submit" value="Apply">
-									</form>
-								</div>
+								Whoops! You don't have access to this server!
+								<% if(privacy == 1) { %>
+									<% if(userInfo) { %>
+										Sorry, this server's profile is only visible to members of this server!
+									<% } else { %>
+										This server's profile is only visible to members of this server! If you are a member of this server, please <a onclick="login()" href="#">login</a> and try again.
+									<% } %>
+								<% } else { %>
+									<% if(userInfo) { %>
+										This server's profile is only visible to it's server members with the <code>Manage Server</code> permission. If you do have this permission, please <a onclick="login()" href="#">login</a> and try again.
+									<% } else { %>
+										This server's profile is only visible to it's server members with the <code>Manage Server</code> permission. If you do have this permission, please <a onclick="login()" href="#">login</a> and try again.
+									<% } %>
+								<% } %>
 								<script>
-									var inputs = document.getElementsByName("since");
-									inputs.forEach(function(input) {
-										input.value = since;
-									})
-
-									games.forEach(function(game) {
-										$("#gameSelect").append(new Option(game, game))
-									})
-									$('#gameSelect').selectize({
-										sortField: 'text'
-									});
+									function login() {
+										var url = encodeURI(window.location.pathname);
+										window.location.href = "/login?redirect=" + url;
+									}
 								</script>
 							</section>
 							</div>

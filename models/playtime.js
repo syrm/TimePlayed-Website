@@ -9,6 +9,8 @@ var connection = mysql.createPool({
   supportBigNumbers: true
 });
 
+var Discord = require("./discord")
+
 exports.checkPrivate = function(userID, callback) {
   connection.query("SELECT count(*) FROM privateUsers WHERE userID=? ", [userID], function(error, results, fields) {
     var private = results[0]["count(*)"] > 0;
@@ -88,6 +90,27 @@ exports.getServerGames = function(id, callback) {
   })
 }
 
+exports.timePlayedServer = function(id, game, since, callback) {
+  var sinceFilter = ""
+  if(since) sinceFilter = "AND startDate > ?"
+  var q = `SELECT 
+  SUM(TIMESTAMPDIFF(HOUR, startDate, IFNULL(endDate, NOW()))) AS time
+  FROM
+    guildStats
+  WHERE
+    guildID = ?
+    AND game = ?
+    ${sinceFilter}`
+  if(since) since = new Date(since)
+  connection.query(q, [id, game, since], function(error, playtime, fields) {
+    connection.query("SELECT iconURL FROM knownGames WHERE game=? AND iconURL IS NOT NULL", [game], function(error, iconResults, fields) {
+      var icon;
+      if(iconResults[0]) icon = iconResults[0].iconURL;
+      callback([playtime[0].time, icon])
+    })
+  })
+}
+
 exports.topDays = function(id, callback) {
   var q = `
   SELECT
@@ -112,6 +135,47 @@ exports.topGamesDb = function(sinceDays, callback) {
 exports.checkPremiumGuild = function(id, callback) {
   connection.query("SELECT COUNT(*) AS count FROM premium WHERE guildID=?", [id, id], function(error, results, fields) {
     callback(results[0].count > 0)
+  })
+}
+
+exports.checkServerPrivacy = function(guildID, callback) {
+  connection.query("SELECT value FROM guildPrivacy WHERE guildID=?", [guildID], function(error, results, fields) {
+    var value = 1;
+    if(results[0]) value = results[0].value
+    callback(value);
+  })
+}
+
+exports.checkServerAccess = function(value, guildID, userInfo, userGuilds, callback) {
+  if(value == 0) {
+    // Open for everyone
+    callback(true);
+  } else if(value == 1) {
+    // Only for server members
+    if(userInfo) {
+      Discord.botRequest(`guilds/${guildID}/members/${userInfo.id}`, function(result) {
+        if(result.message) {
+          callback(false);
+        } else {
+          callback(true);
+        }
+      })
+    } else {
+      callback(false);
+    }
+  } else if(value == 2) {
+    // Only for server moderators
+    if(userGuilds && userGuilds.filter(e => e.id == guildID)[0] && Discord.permList(userGuilds.filter(e => e.id == guildID)[0].permissions).includes("generalManageServer")) {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  }
+}
+
+exports.setGuildPrivacy = function(id, value, callback) {
+  connection.query("INSERT INTO guildPrivacy (guildID, value) VALUES(?, ?) ON DUPLICATE KEY UPDATE value=?", [id, value, value], function(error, results, fields) {
+    callback();
   })
 }
 
