@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>TimePlayed - Test Page</title>
+		<title>TimePlayed - Invalid Game</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="/js/ie/html5shiv.js"></script><![endif]-->
@@ -29,7 +29,7 @@
 			var since = "<%= since || undefined %>";
 			var games = [
 				<% games.forEach(function(game) { %>
-					"<%- game %>",
+					`<%= game %>`,
 				<% }) %>
 			];
 		</script>

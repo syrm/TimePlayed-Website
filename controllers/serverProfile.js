@@ -52,8 +52,7 @@ router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
                               iconURL: totalHours[1],
                               manageServer: manageServer,
                               topUsers: topUsers,
-                              gameChart: gameChart[0],
-                              startDate: gameChart[1]
+                              gameChart: gameChart
                             })
                           })
                         })

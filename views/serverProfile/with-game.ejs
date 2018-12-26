@@ -31,12 +31,12 @@
 			var since = "<%= since || undefined %>";
 			var games = [
 				<% games.forEach(function(game) { %>
-					"<%- game %>",
+					`<%= game %>`,
 				<% }) %>
 			]; 
 			var topUsers = [
 				<% topUsers.forEach(function(user) { %>
-					{userID: <%- user.userID %>, username: "<%- user.username %>", time: <%- user.time %>},
+					{userID: "<%= user.userID %>", username: `<%= user.username %>`, time: <%= user.time %>},
 				<% }) %>
 			];
 		</script>
@@ -171,8 +171,6 @@
 											return day + ' ' + monthNames[monthIndex] + ' ' + year;
 										}
 									%>
-									Day 1 = <code><%- formatDate(startDate) %></code><br>
-									Day <%= gameChart.pop().day %> = <code>today</code>
 									<div id="trendingChart"></div>
 									<script>
 										google.charts.load('current', {packages: ['corechart', 'line']});
@@ -180,23 +178,15 @@
 
 										function drawBasic() {
 											var data = new google.visualization.DataTable();
-											data.addColumn('number', 'Day');
+											data.addColumn('date', 'Day');
 											data.addColumn('number', 'Time');
 											data.addRows([
 												<% gameChart.forEach(function(obj) { %>
-													[<%- obj.day %>, <%- obj.time %>],
+													[new Date("<%- obj.day %>"), <%- obj.time %>],
 												<% }) %>
 											])
 
 											var options = {
-												hAxis: {
-													title: 'Day'
-												},
-												vAxis: {
-													title: 'Popularity',
-													viewWindowMode: "explicit",
-													viewWindow:{ min: 0 }
-												}
 											};
 
 											var chart = new google.visualization.LineChart(document.getElementById('trendingChart'));
@@ -210,8 +200,7 @@
 
 								<%# TOP USERS %>
 								<h2>Top users:</h2>
-								<i>Only includes users with public profiles</i><br>
-								<i>Note: this data was retrieved from the playtime table, it may deviate from other page information</i>
+								<i>Only includes users with public profiles</i>
 								<table id="topUsersTable" class="display" >  
 									<thead> 
 										<tr>
@@ -259,7 +248,7 @@
 									var table = $("#topUsersTable").find('tbody')
 									topUsers.forEach(function(obj, i) {
 										i = i + 1;
-										table.append( "<tr><td>" + i + "</td><td>" + obj.username + "</td><td>" + time(obj.time) + "</td></tr>");
+										table.append( "<tr><td>" + i + "</td><td><a href='/profile/" + obj.userID + "'>" + obj.username + "</a></td><td>" + time(obj.time) + "</td></tr>");
 									})
 									$('#topUsersTable').DataTable( {
 										bLengthChange: false,

@@ -31,12 +31,12 @@
 			var since = "<%= since || undefined %>";
 			var topGames = [
 				<% for(var i=0; i < topGames.length; i++) { %>
-						{game: "<%- topGames[i].game %>", time: "<%- topGames[i].time %>", count:"<%- topGames[i].count %>",  iconURL: "<%- topGames[i].iconURL %>"},
+						{game: `<%= topGames[i].game %>`, time: `<%= topGames[i].time %>`, count:`<%= topGames[i].count %>`,  iconURL: `<%= topGames[i].iconURL %>`},
 				<% }%>
 			];
 			var games = [
 				<% games.forEach(function(game) { %>
-					"<%- game %>",
+					`<%= game %>`,
 				<% }) %>
 			];
 		</script>

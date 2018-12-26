@@ -11,6 +11,8 @@ var connection = mysql.createPool({
 
 var Discord = require("./discord")
 
+var client = require("../middlewares/botClient").client
+
 // Privacy
 
 exports.checkPrivate = function(userID, callback) {
@@ -156,7 +158,7 @@ exports.timePlayedServer = function(id, game, since, callback) {
   var sinceFilter = ""
   if(since) sinceFilter = "AND startDate > ?"
   var q = `SELECT 
-  SUM(TIMESTAMPDIFF(HOUR, startDate, IFNULL(endDate, NOW()))) AS time
+  ROUND(SUM(TIMESTAMPDIFF(SECOND, startDate, IFNULL(endDate, NOW()))) / 3600) AS time
   FROM
     guildStats
   WHERE
@@ -179,20 +181,24 @@ exports.topUsers = function(id, game, callback) {
     userID,
     SUM(TIMESTAMPDIFF(SECOND,startDate, IFNULL(endDate, NOW()))) AS time
   FROM
-    playtime
+    guildStats
   WHERE
-    game=?
-    AND userID IN (SELECT DISTINCT userID FROM guildStats WHERE guildID=?)
-      AND userID IN (SELECT userID FROM termsAccept WHERE accept=1)
-      AND userID NOT IN (SELECT userID FROM privateUsers)
+    guildID=?
+    AND game=?
+    AND userID IN (SELECT userID FROM termsAccept WHERE accept=1)
+    AND userID NOT IN (SELECT userID FROM privateUsers)
   GROUP BY userID
-  ORDER BY time DESC`
-  connection.query(q, [game, id], function(error, topUsers, fields) {
+  ORDER BY time DESC
+  LIMIT 20`
+  console.log("Getting top users...")
+  connection.query(q, [id, game], function(error, topUsers, fields) {
+    console.log("Getting user info...")
     Discord.bulkUserInfo(topUsers.map(e => e.userID), function(userInfos) {
       topUsers.forEach(user => {
         var userInfo = userInfos.filter(e => e.id == user.userID)
         if(userInfo[0]) user.username = userInfo[0].username
       })
+      console.log("Done")
       callback(topUsers);
     })
   })
@@ -201,17 +207,16 @@ exports.topUsers = function(id, game, callback) {
 exports.gameChart = function(id, game, callback) {
   var q = `
   SELECT
-    TIMESTAMPDIFF(DAY,(SELECT startDate FROM guildStats WHERE guildID=? AND game=? ORDER BY startDate LIMIT 1), startDate) + 1 AS day,
+  DATE_FORMAT(startDate, '%M %d %Y') AS day,
     SUM(TIMESTAMPDIFF(MINUTE, startDate, IFNULL(endDate, NOW()))) AS time
   FROM guildStats
   WHERE
     guildID=?
       AND game=?
-  GROUP BY TIMESTAMPDIFF(DAY,(SELECT startDate FROM guildStats WHERE guildID=? AND game=? ORDER BY startDate LIMIT 1), startDate)`
+  GROUP BY DATE_FORMAT(startDate, '%M %d %Y')
+  ORDER BY startDate`
   connection.query(q, [id, game, id, game, id, game], function(error, results, fields) {
-    connection.query(`SELECT startDate FROM guildStats WHERE guildID=? AND game=? ORDER BY startDate LIMIT 1`, [id, game], function(error, date, fields) {
-      callback([results, date[0].startDate]);
-    })
+    callback(results);
   })
 }
 
