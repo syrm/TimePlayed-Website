@@ -15,7 +15,6 @@ app.use(session({secret: "SFJSDF4cvn4DSAFSF456f654xcv132Fsxc34dsFxcsfd"}));
 
 console.log("Starting bot up...")
 botClient.startClient(function(client) {
-  console.log(client.user.username)
   app.use(express.static(__dirname + '/public'))
   app.use(require('./controllers'))
   app.use('/', require('./middlewares/discord'));

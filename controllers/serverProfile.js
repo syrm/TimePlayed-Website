@@ -3,6 +3,7 @@ var express = require('express')
   , Playtime = require('../models/playtime')
   , Discord = require('../models/discord')
 
+var client = require("../middlewares/botClient").client
 
 router.get("/", function(req, res) {
   res.render("serverProfile", {userInfo: req.session.userInfo})
@@ -22,8 +23,8 @@ router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
       Playtime.checkServerPrivacy(id, function(privacy) {
         Playtime.checkServerAccess(privacy, id, req.session.userInfo, req.session.userGuilds, function(access) {
           if(access) {
-            Discord.botRequest(`guilds/${id}`, function(guild) {
-              if(guild.code) {
+            var guild = client.guilds.get(id);
+              if(!guild) {
                 // If TimePlayed is not in the server
                 res.render("serverProfile/invalid-server", {userInfo: sessionUser})
               } else {
@@ -60,7 +61,7 @@ router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
                     }
                   } else {
                     // If there's no game
-                    Playtime.topGamesServer(id, req.query.minUsers, req.query.select, req.query.since, function(topGames) {
+                    Playtime.topGamesServer(id, req.query.select, req.query.since, function(topGames) {
                       var totalHours = 0;
                       topGames.forEach(obj => {
                         totalHours += obj.time / 3600;
@@ -81,7 +82,6 @@ router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
                   }
                 })
               }
-            })
           } else if(privacy == 1 || privacy == 2) {
             res.render("serverProfile/no-access", {
               userInfo: sessionUser,

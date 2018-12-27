@@ -12,6 +12,10 @@
 	
 	/* General */
 
+	a:hover {
+		cursor: pointer;
+	}
+
 	.column {
 		width: 380px;
 		margin: 10px;
@@ -35,10 +39,10 @@
 
 	.large-stand-out {
 		color: #fc1480;
-		font-size: 45px;
+		font-size: 2em;
 		font-family: Georgia, serif;
-		line-height: 100%;
-		margin-top: -10px;
+		/* line-height: 100%; */
+		/* margin-top: -10px; */
 	}
 	.box-icon {
 		border-radius: 50%;

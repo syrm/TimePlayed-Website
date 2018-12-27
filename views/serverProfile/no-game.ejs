@@ -34,11 +34,9 @@
 						{game: `<%= topGames[i].game %>`, time: `<%= topGames[i].time %>`, count:`<%= topGames[i].count %>`,  iconURL: `<%= topGames[i].iconURL %>`},
 				<% }%>
 			];
-			var games = [
-				<% games.forEach(function(game) { %>
-					`<%= game %>`,
-				<% }) %>
-			];
+			function selectGame(game) {
+				window.location.href = "?game=" + game + "&since=" + since
+			}
 		</script>
 	</head>
 	<body style="color: black">
@@ -73,11 +71,6 @@
 										</select>
 									</div>
 									<div style="margin-right: 30px">
-										<p style="margin-bottom: 0px"><strong>Minimal users for game to count:</strong></p>
-										<input name="minUsers" style="color: black" type="number" min="0" max="99" value="<%= minUsers || 0 %>">
-										<input type="submit" value="apply">
-									</div>
-									<div style="margin-right: 30px">
 										<p style="margin-bottom: 0px"><strong>Since filter:</strong></p>
 										<input type="date" name="since" style="color: black" onchange="this.form.submit()">
 									</div>
@@ -89,6 +82,9 @@
 									<form id="filterForm" action="">
 										<select name="game" id="gameSelect" style="width: 80%;">
 											<option id="noGame" value="" disabled selected>-- Select game --</option>
+											<% games.forEach(function(currGame) { %>
+												<option value="<%= currGame %>"><%= currGame %><option>
+											<% }) %>
 										</select>
 										<input type="hidden" name="since" style="color: black">
 									</form>
@@ -102,6 +98,7 @@
 										input.setAttribute('max', today);
 										input.value = since;
 									})
+
 									// Select filter
 									$("#selectFilter > option").each(function() {
 										if(this.value == "<%= selectFilter %>") {
@@ -109,10 +106,7 @@
 										}
 									})
 
-									// Game filter
-									games.forEach(function(game) {
-										$("#gameSelect").append(new Option(game, game))
-									})
+									// Select by game
 
 									var select = $('#gameSelect').selectize({
 										sortField: 'text'
@@ -150,7 +144,7 @@
 										</div>
 										<div style="flex: 1">
 											<p style="font-size: 15px;">Total games played:</p>
-											<p class="large-stand-out"><script>document.write(topGames.length)</script></p>
+											<p class="large-stand-out"><%= topGames.length %></p>
 										</div>
 										
 									</div>
@@ -168,49 +162,18 @@
 								<%# TOP 3 GAME BOXES VISUALIZATION %>
 								<h2>Top 3 server games:</h2>
 								<div class="flex-row">
-									<script>
-										function time(num) {
-											if(num < 0) return n;
-											if(num == 0) return "no"
-
-											var hours = Math.floor(num / 3600);
-											var minutes = Math.floor(num % 3600 / 60);
-											var seconds = Math.floor(num % 3600 % 60);
-											
-											var h = ""
-											if(hours == 1) h = "1 hour"
-											if(hours > 1) h = `${hours} hours`
-											var m = ""
-											if(minutes == 1) m = "1 minute"
-											if(minutes > 1) m = `${minutes} minutes`
-											var s = ""
-											if(seconds == 1) s = "1 second"
-											if(seconds > 1) s = `${seconds} seconds`
-											var and = ""
-											if(seconds > 0) {
-												if(minutes > 0 || hours > 0) and = " and "
-											}
-											var comma = ""
-											if(hours > 0) comma = ", "
-											if(seconds < 1 && hours > 0) comma = " and "
-											
-											return h + comma +  m + and + s
-										}
-										function format(i) {
-											var str = '<div class="column gray-box">\n'
-											// Icon
-											if(topGames[i].iconURL) str += '<div><img src=\'' + topGames[i].iconURL + '\' style="width: 50px;" align="left" vertical-align="middle"></div>\n'
-											// Game name / time
-											str += '<div style="flex: 1"><p class="game">' + topGames[i].game + '<br><span style="font-size: 10px;">' + time(topGames[i].time) + '</span></p></div>'
-
-											str += '</div>'
-
-											document.write(str)
-										}
-										format(0)
-										format(1)
-										format(2)
-									</script>
+									<% topGames.forEach(function(obj, i){ %>
+										<% if(i > 2) return; %>
+										<div class="column gray-box">
+											<div>
+												<img src='<%= obj.iconURL %>' style="width: 50px;" vertical-align="middle">
+											</div>
+											<div style="flex: 1">
+												<a class="game no-stripe" onclick="selectGame('<%= obj.game %>')"><%= obj.game %></a><br>
+												<span style="font-size: 10px;"><%= time(obj.time) %></span>
+											</div>
+										</div>
+									<% })%>
 								</div>
 
 								<%# TOP GAMES CHARTS %>
@@ -289,16 +252,53 @@
 
 								<%# TOP GAMES TABLE %>
 								<h2>Top games table:</h2>
+								<%
+									function time(num) {
+										if(num < 0) return n;
+										if(num == 0) return "no"
+
+										var hours = Math.floor(num / 3600);
+										var minutes = Math.floor(num % 3600 / 60);
+										var seconds = Math.floor(num % 3600 % 60);
+										
+										var h = ""
+										if(hours == 1) h = "1 hour"
+										if(hours > 1) h = `${hours} hours`
+										var m = ""
+										if(minutes == 1) m = "1 minute"
+										if(minutes > 1) m = `${minutes} minutes`
+										var s = ""
+										if(seconds == 1) s = "1 second"
+										if(seconds > 1) s = `${seconds} seconds`
+										var and = ""
+										if(seconds > 0) {
+											if(minutes > 0 || hours > 0) and = " and "
+										}
+										var comma = ""
+										if(hours > 0) comma = ", "
+										if(seconds < 1 && hours > 0) comma = " and "
+										
+										return h + comma +  m + and + s
+									}
+								%>
 								<table id="topGamesTable" class="display" >  
 									<thead> 
 										<tr>
 											<th>Place</th>  
 											<th>Game</th>  
 											<th>Time played</th>
-											<th>Users</th>
+											<th>Players</th>
 										</tr>
 									</thead>
 									<tbody>
+										<% topGames.forEach(function(obj, i) { %>
+											<tr>
+												<td><%=i + 1%></td>
+												<td><a class="no-stripe" onclick="selectGame('<%=obj.game%>')"><%= obj.game %></a></td>
+												<td><%= time(obj.time) %></td>
+												<td><%= obj.count %></td>
+											</tr>
+										<% }) %>
 									</tbody>
 								</table>
 
@@ -306,16 +306,12 @@
 									function removeSince() {
 										window.location = window.location.href.split('?')[0];
 									}
-									var table = $("#topGamesTable").find('tbody')
-									topGames.forEach(function(obj, i) {
-										i = i + 1;
-										table.append( "<tr><td>" + i + "</td><td>" + obj.game + "</td><td>" + time(obj.time) + "</td><td>" + obj.count + "</td></tr>");
-									})
 									$('#topGamesTable').DataTable( {
 										bLengthChange: false,
 										bInfo: false
 									});
 									$('#topGamesTable_filter > label > input').css("color", "black")
+
 								</script>
 							</section>
 							</div>
