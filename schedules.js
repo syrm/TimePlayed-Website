@@ -61,7 +61,7 @@ function updateGames() {
   updateTopGames(7, function() {
     updateTopGames(30, function() {
       console.log("Top games updated!")
-      // setTimeout(updateGames, 600000)
+      setTimeout(updateGames, 600000)
     })
   })
 }
