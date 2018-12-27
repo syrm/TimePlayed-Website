@@ -65,4 +65,6 @@ function updateGames() {
     })
   })
 }
-// updateGames();
+if(keys.schedule) {
+  updateGames();
+}
