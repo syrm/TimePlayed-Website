@@ -52,6 +52,7 @@ router.get(/^\/([0-9]{17,18})\/?(general|leaderboard|role-awards)?$/, function(r
             var manageRoles = guild.me.permissions.has("MANAGE_ROLES");
             var roleOptions = "<option value='' selected disabled>- Select role -</option>";
             roles.forEach(role => {
+              if(role.position < 1) return;
               var disabled = "";
               var colorStr = `style='color: ${role.hexColor}'`
               if(role.position >= highestBotRole.position) {
