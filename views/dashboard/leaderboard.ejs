@@ -239,16 +239,16 @@
                                 Ranking channel:
                                 <select name="rankingChannel" style="width:60%" class="form-control">
                                     <option value="" selected disabled>- Select channel -</option>
-                                    <% for(var i=0; i < channels.length; i++) { %>
+                                    <% channels.forEach(function(channel) { %>
                                         <%
                                         selected = "";
-                                        if(channels[i].id == guildConf.rankingChannel) {
+                                        if(channel.id == guildConf.rankingChannel) {
                                             selected = "selected";
                                         } %>
-                                        <option value="<%= channels[i].id %>"<%= selected %>>#<%= channels[i].name %></option>
-                                    <% } %>
+                                        <option value="<%= channel.id %>"<%= selected %>>#<%= channel.name %></option>
+                                    <% }) %>
                                 </select>
-                                <strong>Please make sure TimePlayed has read/write/manage messages permissions in the channel you selected, otherwise the leaderboard won't be sent</strong>
+                                <strong>Please make sure TimePlayed has read/write/manage messages permissions in the channel you selected, otherwise the channel won't be listed above</strong>
                                 <br><br>
                                 
                                 <div style="width: 500px" class="column">

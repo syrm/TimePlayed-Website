@@ -3,6 +3,8 @@ var express = require('express')
   , Dashboard = require('../models/dashboard')
   , Discord = require('../models/discord')
 
+  var client = require("../middlewares/botClient").client
+
 router.get('/', function(req, res) {
   userGuilds = req.session.userGuilds;
   res.render('dashboard', {
@@ -24,54 +26,52 @@ router.get(/^\/([0-9]{17,18})\/?(general|leaderboard|role-awards)?$/, function(r
       if(!guildConf) {
         return res.redirect(`https://discordapp.com/oauth2/authorize?client_id=433625399398891541&scope=bot&permissions=268708928&guild_id=${req.params[0]}`);
       }
-      Dashboard.checkPremium(guildID, function(premium) { 
+      Dashboard.checkPremium(guildID, function(premium) {
+        var guild = client.guilds.get(guildID);
+        if(!guild) res.send("This server seems to be deleted! Please sign out and sign in again")
         if(page == "leaderboard") {
-          Discord.botRequest(`guilds/${guildID}/channels`, function(channels) {
-            // Only send text channels
-            channels = channels.filter(e => {return e.type == 0});
-            res.render(`dashboard/leaderboard`, {
+          // Only send text channels
+          var channels = guild.channels;
+          channels = channels.filter(e => {return e.type == "text" && e.deleted != true && guild.me.permissionsIn(e).has(["READ_MESSAGES", "SEND_MESSAGES", "MANAGE_MESSAGES"])});
+          res.render(`dashboard/leaderboard`, {
+            guildConf: guildConf,
+            url: req.originalUrl,
+            id: guildID,
+            guilds: userGuilds,
+            premium: premium,
+            channels: channels,
+            userInfo: req.session.userInfo
+          })
+        } else if(page == "role-awards") {
+          Dashboard.getRoleAwards(guildID, function(roleAwards) {
+            var roles = guild.roles.sort((a, b) => b.position - a.position);
+
+            var highestBotRole = guild.me.roles.sort(function(a, b) {
+              return a.position < b.position
+            }).first()
+
+            var manageRoles = guild.me.permissions.has("MANAGE_ROLES");
+            var roleOptions = "<option value='' selected disabled>- Select role -</option>";
+            roles.forEach(role => {
+              var disabled = "";
+              var colorStr = `style='color: ${role.hexColor}'`
+              if(role.position >= highestBotRole.position) {
+                disabled = " disabled"
+                colorStr = ""
+              }
+              roleOptions += `<option ${colorStr} value=${role.id}${disabled}>${role.name}</option>`
+            })
+            res.render(`dashboard/role-awards`, {
               guildConf: guildConf,
               url: req.originalUrl,
               id: guildID,
               guilds: userGuilds,
               premium: premium,
-              channels: channels,
+              roleAwards: roleAwards,
+              guildRoles: roles,
+              roleOptions: roleOptions,
+              manageRoles: manageRoles,
               userInfo: req.session.userInfo
-            })
-          })
-        } else if(page == "role-awards") {
-          Dashboard.getRoleAwards(guildID, function(roleAwards) {
-            Discord.botRequest(`guilds/${guildID}`, function(roles) {
-              roles = roles["roles"];
-              roles.sort((a, b) => {return b.position - a.position});
-              Discord.botRequest(`guilds/${guildID}/members/433625399398891541`, function(botMember) {
-                var highestBotPos = 0;
-                roles.forEach(role => {
-                  if(botMember.roles.includes(role.id) && role.position > highestBotPos) {
-                    highestBotPos = role.position
-                  }
-                })
-                var botPerms = roles.filter(e => {return e.position == highestBotPos})[0].permissions
-                var manageRoles = Discord.permList(botPerms).includes("generalManageRoles");
-                var roleOptions = "<option value='' selected disabled>- Select role -</option>";
-                roles.forEach(role => {
-                  var disabled = "";
-                  if(role.position >= highestBotPos) disabled = " disabled"
-                  roleOptions += `<option value=${role.id}${disabled}>${role.name}</option>`
-                })
-                res.render(`dashboard/role-awards`, {
-                  guildConf: guildConf,
-                  url: req.originalUrl,
-                  id: guildID,
-                  guilds: userGuilds,
-                  premium: premium,
-                  roleAwards: roleAwards,
-                  guildRoles: roles,
-                  roleOptions: roleOptions,
-                  manageRoles: manageRoles,
-                  userInfo: req.session.userInfo
-                })
-              })
             })
           })
         } else {
