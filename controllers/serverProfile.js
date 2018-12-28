@@ -93,8 +93,11 @@ router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
         })
       })
     } else {
-      // If the server isn't premium
-      res.render("serverProfile/not-premium", {userInfo: sessionUser})
+      if(client.users.get(id)) {
+        res.redirect("/profile/" + id)
+      } else {
+        res.render("serverProfile/not-premium", {userInfo: sessionUser})
+      }
     }
   })
   

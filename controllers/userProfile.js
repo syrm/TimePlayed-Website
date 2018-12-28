@@ -27,7 +27,11 @@ router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
   var sessionUser = req.session.userInfo;
   var user = client.users.get(id)
   if(!user) {
-    res.render("userProfile/not-found", {id: id, userInfo: sessionUser})
+    if(client.guilds.get(id)) {
+      res.redirect("/server/" + id)
+    } else {
+      res.render("userProfile/not-found", {id: id, userInfo: sessionUser})
+    }
   } else if(user.bot) {
     res.render("userProfile/bot", { userInfo: sessionUser})
   } else {
