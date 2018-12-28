@@ -108,7 +108,7 @@ router.get('/logout', (req, res) => {
 
 router.post('/update-info', (req, res) => {
   token = req.session.discordToken;
-  if(!token) return res.render("");
+  if(!token) return res.send("");
   Discord.getUserInfo(token, function(userInfo) {
     req.session.userInfo = userInfo;
     Discord.getUserGuilds(token, function(userGuilds) {
@@ -116,7 +116,7 @@ router.post('/update-info', (req, res) => {
         userGuilds = userGuilds.filter(e => {return guildPerms(e.permissions)});
         req.session.userGuilds = userGuilds;
       }
-      res.render("");
+      res.send("");
     });
   })
 });
