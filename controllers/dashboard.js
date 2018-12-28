@@ -1,7 +1,6 @@
 var express = require('express')
   , router = express.Router()
   , Dashboard = require('../models/dashboard')
-  , Discord = require('../models/discord')
 
   var client = require("../middlewares/botClient").client
 
@@ -49,12 +48,15 @@ router.get(/^\/([0-9]{17,18})\/?(general|leaderboard|role-awards)?$/, function(r
             var highestBotRole = guild.me.roles.sort(function(a, b) {
               return a.position < b.position
             }).first()
+            console.log(highestBotRole.position)
+            console.log(highestBotRole.name)
 
             var manageRoles = guild.me.permissions.has("MANAGE_ROLES");
             var roleOptions = "<option value='' selected disabled>- Select role -</option>";
             roles.forEach(role => {
               var disabled = "";
               var colorStr = `style='color: ${role.hexColor}'`
+              console.log(role.position)
               if(role.position >= highestBotRole.position) {
                 disabled = " disabled"
                 colorStr = ""
