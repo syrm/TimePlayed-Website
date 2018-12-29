@@ -46,7 +46,6 @@
 						setTimeout(function() {
 							$({countNum: 0}).animate({countNum: userCount}, {
 								duration: 2000,
-								easing: 'linear',
 								step: function() {
 									$('#count').text(Math.floor(this.countNum));
 								},
