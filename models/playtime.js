@@ -233,3 +233,9 @@ exports.getServerGames = function(id, callback) {
     callback(results.map(e => e.game))
   })
 }
+
+exports.getUserCount = function(callback) {
+  connection.query("SELECT COUNT(*) AS count FROM termsAccept", function(error, results, fields) {
+    callback(results[0].count)
+  })
+}

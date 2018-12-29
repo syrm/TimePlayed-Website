@@ -2,7 +2,7 @@ var express = require('express')
   , router = express.Router()
   , Dashboard = require('../models/dashboard')
 
-  var client = require("../middlewares/botClient").client
+var client = require("../middlewares/botClient").client
 
 router.get('/', function(req, res) {
   userGuilds = req.session.userGuilds;

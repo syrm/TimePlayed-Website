@@ -12,6 +12,7 @@
 		<!--[if lte IE 8]><script src="js/ie/html5shiv.js"></script><![endif]-->
 		<link rel="stylesheet" href="css/main.css" />
 		<link rel="shortcut icon" type="image/png" href="/favicon.png"/>
+		<script src="/js/jquery.min.js"></script>
 		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie8.css" /><![endif]-->
 		<!--[if lte IE 9]><link rel="stylesheet" href="css/ie9.css" /><![endif]-->
 	</head>
@@ -34,9 +35,28 @@
 							<ul class="actions">
 								<li><a href="http://invite.timeplayed.xyz" target="_BLANK" class="button special">Invite me!</a></li>
 							</ul>
+							<p style="margin-bottom: 10px;">Currently watching the playtime of:</p>
+							<p><span class="large-stand-out" id="count" style="font-size: 3em">0</span> users</p>
 						</div>
 						<a href="#one" class="more scrolly">Learn More</a>
 					</section>
+
+					<script>
+						var userCount = <%= userCount %>;
+						setTimeout(function() {
+							$({countNum: 0}).animate({countNum: userCount}, {
+								duration: 2000,
+								easing: 'linear',
+								step: function() {
+									$('#count').text(Math.floor(this.countNum));
+								},
+								complete: function() {
+									$('#count').text(this.countNum);
+								}
+							});
+						}, 2000)
+						
+					</script>
 
 				<!-- Intro -->
 					<section id="one" class="wrapper style1 special">

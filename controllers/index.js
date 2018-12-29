@@ -1,11 +1,15 @@
 var express = require('express')
   , router = express.Router()
 
+var Playtime = require('../models/playtime')
 
 router.get('/', function(req, res) {
-  res.render('index', {
-    userInfo: req.session.userInfo
-  });
+  Playtime.getUserCount(function(userCount) {
+    res.render('index', {
+      userInfo: req.session.userInfo,
+      userCount: userCount
+    });
+  })
 })
 
 router.get(/^\/commands(\.[^.]+)?$/, function(req, res) {
