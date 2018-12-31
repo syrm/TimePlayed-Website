@@ -53,7 +53,8 @@ router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
                               iconURL: totalHours[1],
                               manageServer: manageServer,
                               topUsers: topUsers,
-                              gameChart: gameChart
+                              gameChart: gameChart,
+                              privacy: privacy
                             })
                           })
                         })
@@ -76,7 +77,8 @@ router.get(/^\/([0-9]{17,18})\/?$/, function(req, res) {
                         since: req.query.since,
                         minUsers: req.query.minUsers,
                         games: games,
-                        manageServer: manageServer
+                        manageServer: manageServer,
+                        privacy: privacy
                       });
                     })
                   }

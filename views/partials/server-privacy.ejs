@@ -3,7 +3,7 @@
         <p style="margin-bottom: 0px"><strong>Server profile visibility:</strong></p>
     </div>
     <div>
-        <select onchange="setPrivacy(this.selectedIndex)">
+        <select id="serverPrivacy" onchange="setPrivacy(this.selectedIndex)">
             <option name="0">Visible to everyone</option>
             <option name="1">Only visible to server members</option>
             <option name="2">Only visible to server members with Manage Server permission</option>
@@ -12,6 +12,7 @@
 </div>
 
 <script>
+    $("#serverPrivacy")[0].selectedIndex = <%= privacy %>;
     function setPrivacy(value) {
         $.ajax({
             url : "/set-guild-privacy",
