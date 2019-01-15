@@ -66,7 +66,7 @@
 										<li>A wrong prefix usage, to get the current server's prefix you can mention @TimePlayed#3248 or use @TimePlayed#3248 as prefix for commands</li>
 										<li>The bot not being in the server you're trying to run the command in, <a href="https://discordapp.com/oauth2/authorize?client_id=433625399398891541&permissions=268446720&scope=bot" target="_BLANK">reinvite the bot</a>  if it's not in your server anymore for some reason</li>
 									</ul>
-									If all of the above things don't work and the bot won't respond to <code>!!help</code> in PM, the bot is probably offline due to issues/maintenance. Before reporting the problem, please check the #announcements channel in the support server to check if the issue is already known.
+									If all of the above things don't work and the bot won't respond to <code>!!help</code> in PM, the bot is probably offline due to issues/maintenance. Before reporting the problem, please check the #outages channel in the support server to check if the issue is already known.
 									</p>
 								</div>
 
@@ -75,7 +75,7 @@
 									<p style="margin-bottom: 0.2em">This can be caused by:</p>
 									<ul>
 										<li>Wrong spelling, please try the <code>topPlayed</code> command to see if you spelled the game correctly</li>
-										<li>The bot only logging your playtime for a short period, <strong>when the bot joins your server it will start measuring</strong>.</li>
+										<li>The bot only logging your playtime for a short period, the bot will start logging your playtime <strong>from the moment you accept to the Terms of Service</strong>.</li>
 										<li>Discord being turned off while playing, that way Discord won't know you are playing a game so the bot will also not be able to log your playtime</li>
 										<li>Not properly configured game detection, please read <a href="https://support.discordapp.com/hc/en-us/articles/217960107-Games-Detection-101" target="_blank">this</a> article for Discord's game detection documentation</li>
 									</ul>
@@ -87,11 +87,10 @@
 									<p style="margin-bottom: 0.2em">I am logging your playtime with Discord presences, like you see in the memberlist on the right of Discord underneath usernames.<br>
 									In Discord go to <code>settings -> games</code> to add games, if your Discord status shows you're playing a game TimePlayed will register your playtime.<br>
 									More help about Discord game detection is located <a href="https://support.discordapp.com/hc/en-us/articles/217960107-Games-Detection-101" target="_blank">here</a>.</p>
-									<h4 style="text-transform: none; letter-spacing: 1px; margin-bottom: 0.2em">Complicated answer:</h4>
-									<p>Well, as the title says, the actual technique behind logging your playtime is a bit more complicated. If you have complexity disorder please just close this question for your own good.<br>
-									I'm logging your playtime in a <a href="https://www.mysql.com/" target="_blank">MySQL</a> database, which has two tables: currentUsers and playtime. In the currentusers I will log members who are currently playing a game, with the start date of when they started playing the game, and the game name as columns.<br>
-									The bot updates the tables every minute. When logging users, the first thing the bot will do is check for every member the bot is logging if they are playing a game.<br>
-								If they are playing a game, the bot will check if the game they are playing is the same as in the currentUsers table, if that is the case the bot will do nothing with that user, if it isn't the bot will remove the user's playtime from the currentUsers table, and insert it in the permanent playtime table, with the start date and current time (end date) of the game.</p>
+									<h4 style="text-transform: none; letter-spacing: 1px; margin-bottom: 0.2em">Technical answer:</h4>
+									I'm logging your playtime in a <a href="https://www.mysql.com/" target="_blank">MySQL</a> database, in a table called <code>playtime</code>. This table contains the ID of the user, the game the user was playing, the date/time the user started playing that game, and the date/time the user stopped playing that game.<br>
+									When someone starts playing a game, the bot inserts a row in the playtime table with the users's ID, the game the user is playing and the current date. When a user stops playing a game, the bot looks up that user in the playtime table and sets the end date to the current date. This way you can keep complete track of which games you were playing!<br>
+									</p>
 								</div>
 
 								<button class="accordion" id="premium">How do I get access to premium features?</button>
