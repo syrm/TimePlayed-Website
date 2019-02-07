@@ -39,7 +39,8 @@ router.get(/^\/([0-9]{17,18})\/?(general|leaderboard|role-awards)?$/, function(r
             guilds: userGuilds,
             premium: premium,
             channels: channels,
-            userInfo: req.session.userInfo
+            userInfo: req.session.userInfo,
+            botIcon: client.user.avatarURL
           })
         } else if(page == "role-awards") {
           Dashboard.getRoleAwards(guildID, function(roleAwards) {
