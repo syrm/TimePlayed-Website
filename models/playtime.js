@@ -186,7 +186,9 @@ exports.topUsers = function(id, game, callback) {
   LIMIT 20`
   connection.query(q, [id, game], function(error, topUsers, fields) {
       topUsers.forEach(user => {
-        user.username = client.users.get(user.userID).username
+        var user = client.users.get(user.userID);
+        if(!user) return;
+        user.username = user.username
       })
       callback(topUsers);
   })
