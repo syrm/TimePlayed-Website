@@ -11,7 +11,6 @@ var connection = mysql.createPool({
 
 function updateGames() {
   var q = `
-  DELETE FROM topGames WHERE since = ?;
   INSERT INTO topGames (game, players, hours, iconURL, since)
   SELECT
     playtime.game,
@@ -27,10 +26,12 @@ function updateGames() {
   GROUP BY playtime.game
   ORDER BY count DESC
   LIMIT 6`
-  connection.query(q, [7, 7, 7], function(error, results, fields) {
-    connection.query(q, [30, 30, 30], function(error, results, fields) {
-      console.log("Top games updated!")
-      setTimeout(updateGames, 600000)
+  connection.query("DELETE FROM topGames", function(error, results, fields) {
+    connection.query(q, [7, 7, 7], function(error, results, fields) {
+      connection.query(q, [30, 30, 30], function(error, results, fields) {
+        console.log("Top games updated!")
+        setTimeout(updateGames, 600000)
+      })
     })
   })
 }

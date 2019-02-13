@@ -5,6 +5,7 @@ var favicon = require('serve-favicon');
 const app = express()
 const port = 80
 
+// Start top games schedule
 require('./schedules');
 
 var botClient = require("./middlewares/botClient")
