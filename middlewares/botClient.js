@@ -8,7 +8,9 @@ module.exports.startClient = function(callback) {
     })
     client.login(keys.botToken).catch(err => console.log(err))
 
-    client.on('error', console.error);
+    client.on('error', function() {
+        console.log("Connection failed")
+      });
 }
 
 module.exports.client = client
