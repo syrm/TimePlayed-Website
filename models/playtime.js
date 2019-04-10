@@ -185,12 +185,11 @@ exports.topUsers = function(id, game, callback) {
   ORDER BY time DESC
   LIMIT 20`
   connection.query(q, [id, game], function(error, topUsers, fields) {
+      var arr = [];
       topUsers.forEach(user => {
-        var user = client.users.get(user.userID);
-        if(!user) return;
-        user.username = user.username
+        arr.push({userID: user.userID, time: user.time, username: client.users.get(user.userID).username})
       })
-      callback(topUsers);
+      callback(arr);
   })
 }
 
