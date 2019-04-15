@@ -187,7 +187,9 @@ exports.topUsers = function(id, game, callback) {
   connection.query(q, [id, game], function(error, topUsers, fields) {
       var arr = [];
       topUsers.forEach(user => {
-        arr.push({userID: user.userID, time: user.time, username: client.users.get(user.userID).username})
+        var dcUser = client.users.get(user.userID)
+        if(!dcUser) return;
+        arr.push({userID: user.userID, time: user.time, username: dcUser.username})
       })
       callback(arr);
   })
