@@ -176,6 +176,11 @@
 											])
 
 											var options = {
+                        curveType: 'function',
+                        legend: { position: 'bottom' },
+                        vAxis: {
+                          viewWindowMode: 'maximized'
+                        }
 											};
 
 											var chart = new google.visualization.LineChart(document.getElementById('trendingChart'));
@@ -184,7 +189,7 @@
 											}
 									</script>
 								<% } else { %>
-									<p>Not enough user data to display chart</p>
+									<p>Not enough data to display chart</p>
 								<% } %>
 
 								<%# TOP USERS %>
