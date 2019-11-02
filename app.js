@@ -22,7 +22,6 @@ botClient.startClient(function(client) {
   app.use(express.static(__dirname + '/public'))
   app.use(require('./controllers'))
   app.use('/', require('./middlewares/discord'));
-  app.use('/', require('./middlewares/set-config'));
   app.use('/', require('./middlewares/profile'));
 
   app.use(function(req, res, next) {
