@@ -30,7 +30,7 @@ function updateGames() {
     connection.query(q, [7, 7, 7], function(error, results, fields) {
       connection.query(q, [30, 30, 30], function(error, results, fields) {
         console.log("Top games updated!")
-        setTimeout(updateGames, 600000)
+        setTimeout(updateGames, 43200000)
       })
     })
   })

@@ -215,7 +215,18 @@ exports.gameChart = function(id, game, callback) {
 
 exports.random = function(amount, callback) {
   amountPlus = amount + 2;
-  connection.query("SELECT userID FROM timeplayed.playtime WHERE startDate BETWEEN DATE_SUB(NOW(), INTERVAL 3 DAY) AND NOW() AND `userID` NOT IN (SELECT userID FROM timeplayed.privateUsers) ORDER BY RAND() LIMIT ?", [amountPlus], function(error, results, fields) {
+  var q = `
+  SELECT userID
+  FROM playtime AS r1 JOIN
+       (SELECT CEIL(RAND() *
+                     (SELECT MAX(id)
+                        FROM playtime)) AS id)
+        AS r2
+ WHERE r1.id >= r2.id
+ AND userID NOT IN (SELECT userID FROM timeplayed.privateUsers)
+ ORDER BY r1.id ASC
+LIMIT ?`
+  connection.query(q, [amountPlus], function(error, results, fields) {
     if(results.length > 0) results = results.map(e => e.userID)
     results = results.filter(function(item, pos, self) {
       return self.indexOf(item) == pos;
