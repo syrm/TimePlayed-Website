@@ -34,6 +34,9 @@ router.get(/^\/getting-started(\.[^.]+)?$/, function(req, res) {
 })
 
 
-router.use('/profile', require("./userProfile"))
+// router.use('/profile', require("./userProfile"))
+router.get(/^\/profile\/?.*?/, function(req, res) {
+  res.send("Sorry, this page is temporarily unavavailable. Click <a href='/'>here</a> to return to the home page.")
+})
 
 module.exports = router
